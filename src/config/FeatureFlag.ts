@@ -1,6 +1,6 @@
 type FeatureFlagKey = 'enableAxiosAuthInterceptors';
 
-type FeatureFlagValue = boolean;
+type FeatureFlagValue = { enabled: boolean };
 
 type FeatureFlagsConfig = Record<FeatureFlagKey, FeatureFlagValue>;
 
@@ -13,26 +13,26 @@ class FeatureFlag {
 
   public isEnabled(flag: FeatureFlagKey): boolean {
     if (!(flag in this.flags)) {
-      throw Error('Feature flag does not exist')
+      throw new Error(`Feature flag "${flag}" does not exist`);
     }
-    return this.flags[flag] ?? false; // Default to false if the flag doesn't exist
+    return this.flags[flag].enabled;
   }
 
   public enable(flag: FeatureFlagKey): void {
-    this.flags[flag] = true;
+    this.flags[flag] = { enabled: true };
   }
 
   public disable(flag: FeatureFlagKey): void {
-    this.flags[flag] = false;
+    this.flags[flag] = { enabled: false };
   }
 
   public toggle(flag: FeatureFlagKey): void {
-    this.flags[flag] = !this.flags[flag];
+    this.flags[flag].enabled = !this.flags[flag].enabled;
   }
 }
 
 const featureFlags = new FeatureFlag({
-  enableAxiosAuthInterceptors: false,
+  enableAxiosAuthInterceptors: { enabled: false },
 });
 
 export default featureFlags;
