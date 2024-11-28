@@ -33,10 +33,8 @@ class ErrorHandler {
             throw new CustomError(data?.message || 'Unexpected error occurred', status);
         }
       }
-
       throw new CustomError('Network error occurred');
     }
-
     throw new CustomError('An unexpected/unknown error occurred');
   }
 }
