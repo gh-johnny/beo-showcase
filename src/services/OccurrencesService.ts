@@ -1,5 +1,5 @@
 import HttpClient from '@/utils/HttpClient';
-import { OccurrencesRequestDTO, OccurrencesResponseDTO } from '@/dto/Occurrences';
+import { OccurrencesRequestDTO, OccurrencesResponseDTO } from '@/dto/OccurrencesDTO';
 
 class OcurrencesService {
   private static instance: OcurrencesService;
@@ -16,7 +16,7 @@ class OcurrencesService {
     return OcurrencesService.instance;
   }
 
-  public async obterPorFiltro(payload: OccurrencesRequestDTO): Promise<OccurrencesResponseDTO> {
+  public async getAll(payload: OccurrencesRequestDTO): Promise<OccurrencesResponseDTO> {
     return this.httpClient.post<OccurrencesResponseDTO>('/obterporfiltro', payload);
   }
 }
