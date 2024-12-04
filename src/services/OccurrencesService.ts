@@ -1,24 +1,25 @@
 import HttpClient from '@/utils/HttpClient';
 import { OccurrencesRequestDTO, OccurrencesResponseDTO } from '@/dto/OccurrencesDTO';
 
-class OcurrencesService {
-  private static instance: OcurrencesService;
+class OccurrencesService {
+  private static instance: OccurrencesService;
   private httpClient: HttpClient;
 
   private constructor() {
     this.httpClient = new HttpClient('/api/eventoexterno');
   }
 
-  public static getInstance(): OcurrencesService {
-    if (!OcurrencesService.instance) {
-      OcurrencesService.instance = new OcurrencesService();
+  public static getInstance(): OccurrencesService {
+    if (!OccurrencesService.instance) {
+      OccurrencesService.instance = new OccurrencesService();
     }
-    return OcurrencesService.instance;
+    return OccurrencesService.instance;
   }
 
   public async getAll(payload: OccurrencesRequestDTO): Promise<OccurrencesResponseDTO> {
-    return this.httpClient.post<OccurrencesResponseDTO>('/obterporfiltro', payload);
+    const res = this.httpClient.post<OccurrencesResponseDTO>('/obterporfiltro', payload);
+    return res
   }
 }
 
-export default OcurrencesService;
+export default OccurrencesService;

@@ -1,10 +1,10 @@
-import OcorrenciasService from '@/services/OccurrencesService';
+import OccurrencesService from '@/services/OccurrencesService';
 import { OccurrencesRequestDTO, OccurrencesResponseDTO } from '@/dto/OccurrencesDTO';
 
-class ObterPorFiltroUseCase {
-  private ocorrenciasService: OcorrenciasService;
+class GetAllOccurrencesUseCase {
+  private ocorrenciasService: OccurrencesService;
 
-  constructor(ocorrenciasService: OcorrenciasService) {
+  constructor(ocorrenciasService: OccurrencesService) {
     this.ocorrenciasService = ocorrenciasService;
   }
 
@@ -14,4 +14,4 @@ class ObterPorFiltroUseCase {
   }
 }
 
-export default ObterPorFiltroUseCase;
+export default GetAllOccurrencesUseCase;

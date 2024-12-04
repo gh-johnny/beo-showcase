@@ -8,7 +8,7 @@ class HttpClient {
 
   constructor(baseURL: string) {
     this.instance = axios.create({
-      baseURL,
+      baseURL: process.env.NEXT_PUBLIC_API_BASE_URL + baseURL,
       timeout: 10000,
       headers: {
         'Content-Type': 'application/json',
@@ -52,7 +52,7 @@ class HttpClient {
   }
 
   public async post<T>(url: string, data: unknown, config?: AxiosRequestConfig): Promise<T> {
-    return this.errorHandler.handle(this.instance.post<T>(url, data, config).then((response) => response.data));
+    return this.instance.post<T>(url, data, config).then((response) => response.data);
   }
 
   public async put<T>(url: string, data: unknown, config?: AxiosRequestConfig): Promise<T> {
