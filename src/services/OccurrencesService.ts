@@ -1,12 +1,20 @@
 import HttpClient from '@/utils/HttpClient';
 import { OccurrencesRequestDTO, OccurrencesResponseDTO } from '@/dto/OccurrencesDTO';
+import URLFormatter from '@/utils/URLFormatter';
+import { envConfig } from '@/config/env';
 
 class OccurrencesService {
   private static instance: OccurrencesService;
   private httpClient: HttpClient;
 
   private constructor() {
-    this.httpClient = new HttpClient('/api/eventoexterno');
+    const baseURL = envConfig.get('BASE_URL')
+    const port = envConfig.get('PORT')
+
+    const urlFormatter = new URLFormatter(baseURL, port)
+    const formattedUrl = urlFormatter.formatPath('/api/eventoexterno')
+
+    this.httpClient = new HttpClient(formattedUrl);
   }
 
   public static getInstance(): OccurrencesService {
