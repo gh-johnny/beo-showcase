@@ -20,17 +20,17 @@ class ErrorHandler {
         const { status, data } = response;
         switch (status) {
           case 400:
-            throw new BadRequestError(data?.message || 'Bad request');
+            throw new BadRequestError({ ...data, fromCustomError: true });
           case 401:
-            throw new UnauthorizedError(data?.message || 'Unauthorized access');
+            throw new UnauthorizedError({ ...data, fromCustomError: true });
           case 403:
-            throw new ForbiddenError(data?.message || 'Forbidden access');
+            throw new ForbiddenError({ ...data, fromCustomError: true });
           case 404:
-            throw new NotFoundError(data?.message || 'Resource not found');
+            throw new NotFoundError({ ...data, fromCustomError: true });
           case 500:
-            throw new InternalServerError(data?.message || 'Internal server error');
+            throw new InternalServerError({ ...data, fromCustomError: true });
           default:
-            throw new CustomError(data?.message || 'Unexpected error occurred', status);
+            throw new CustomError({ ...data, fromCustomError: true });
         }
       }
       throw new CustomError('Network error occurred');

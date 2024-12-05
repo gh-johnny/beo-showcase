@@ -23,8 +23,8 @@ export default async function Home() {
     ],
 
   }
-    const res = await useCase.execute(payload)
-    console.log(res)
+  const res = await useCase.execute(payload)
+  console.log(res)
 
 
   return (

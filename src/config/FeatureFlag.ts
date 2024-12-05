@@ -1,4 +1,4 @@
-type FeatureFlagKey = 'enableAxiosAuthInterceptors';
+type FeatureFlagKey = 'enableAxiosAuthInterceptors' | 'enableReturnMockDataIfTimedOut';
 
 type FeatureFlagValue = { enabled: boolean };
 
@@ -33,6 +33,7 @@ class FeatureFlag {
 
 const featureFlags = new FeatureFlag({
   enableAxiosAuthInterceptors: { enabled: false },
+  enableReturnMockDataIfTimedOut: { enabled: true },
 });
 
 export default featureFlags;
