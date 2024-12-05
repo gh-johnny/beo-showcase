@@ -1,5 +1,5 @@
 import OccurrencesService from "@/services/OccurrencesService";
-import GetAllOccurrencesUseCase from "@/use-cases/occurrences/get-all";
+import GetAllOccurrencesUseCase from "@/usecase/occurrences/GetAllOccurrences";
 
 const SANTA_BARBARA_LAT = '-22.7557' as const
 const SANTA_BARBARA_LON = '-47.4145' as const
