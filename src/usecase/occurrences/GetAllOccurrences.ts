@@ -8,7 +8,7 @@ import Logger from '@/utils/Logger';
 class GetAllOccurrencesUseCase {
   constructor(private readonly occurrencesService: OccurrencesService) { }
 
-  public async execute(payload: OccurrencesRequestDTO): Promise<OccurrencesResponseDTO> {
+  public async execute(payload: OccurrencesRequestDTO) {
     try {
       return await this.occurrencesService.getAll(payload);
     } catch (err) {
@@ -16,7 +16,7 @@ class GetAllOccurrencesUseCase {
     }
   }
 
-  private handleError(err: unknown): OccurrencesResponseDTO {
+  private handleError(err: unknown): OccurrencesResponseDTO | undefined {
     const error = err as AxiosError;
 
     if (error.code === "ECONNABORTED") {
@@ -37,7 +37,9 @@ class GetAllOccurrencesUseCase {
       Logger.error('Unexpected error occurred:', err);
     }
 
-    throw new Error('Could not retrieve occurrences.');
+    Logger.error('Could not retrieve occurrences: ', err);
+
+    return undefined
   }
 }
 
