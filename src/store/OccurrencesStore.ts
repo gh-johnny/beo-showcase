@@ -1,5 +1,5 @@
 import { OccurrencesResponseDTO } from '@/dto/OccurrencesDTO';
-import { create } from 'zustand';
+import { createStore, StoreApi } from 'zustand';
 
 type OccurrencesStoreState = {
   occurrences: OccurrencesResponseDTO | undefined
@@ -12,17 +12,17 @@ type OccurrencesStoreActions = {
 type OccurrencesStoreType = OccurrencesStoreState & OccurrencesStoreActions
 
 class OccurrencesStore {
-  private readonly store;
+  private readonly store: StoreApi<OccurrencesStoreType>;
 
-  constructor() {
-    this.store = create<OccurrencesStoreType>()((set) => ({
-      occurrences: undefined,
-      setOccurrences: (value: OccurrencesResponseDTO) => this.setOccurrences(set, value),
+  constructor(initialOccurrences: OccurrencesResponseDTO | undefined = undefined) {
+    this.store = createStore<OccurrencesStoreType>()((set) => ({
+      occurrences: initialOccurrences,
+      setOccurrences: (payload: OccurrencesResponseDTO) => this.setOccurrences(set, payload),
     }));
   }
 
-  public useStore() {
-    return this.store((state) => state);
+  public getStore() {
+    return this.store;
   }
 
   private setOccurrences(
