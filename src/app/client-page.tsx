@@ -1,6 +1,6 @@
 "use client"
 
-import { useOccurrencesStore } from "@/context/OccurrencesContext"
+// import { useOccurrencesStore } from "@/context/OccurrencesContext"
 import { useState } from "react"
 
 interface ClientPageProps {
@@ -9,14 +9,15 @@ interface ClientPageProps {
 
 export default function ClientPage({ callbackFnAction }: ClientPageProps) {
 
-  const { occurrences } = useOccurrencesStore()
+  // const { setOccurrences } = useOccurrencesStore()
 
   const [flag, setFlag] = useState(false)
 
-  const handleClientClick = async() => {
-    const fromServer = await callbackFnAction(flag)
-    console.log({fromServer})
-    setFlag(fromServer)
+  const handleClientClick = async () => {
+    const dataFromServer = await callbackFnAction(flag)
+    console.log({ dataFromServer })
+    // setOccurrences(dataFromServer)
+    setFlag(dataFromServer)
   }
 
   return <button type="button" className="border p-1 m-12" onClick={() => handleClientClick()}>button client <span>{String(flag)}</span></button>
