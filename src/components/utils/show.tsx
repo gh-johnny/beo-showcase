@@ -1,11 +1,13 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react'
 
-interface ConditionalRenderProps {
-  when: boolean;
-  render: ReactNode;
-  fallback?: ReactNode;
+interface ShowProps {
+  render: ReactNode
+  when: boolean
+  fallback?: ReactNode
 }
 
-export const Show = ({ when, render, fallback = null }: ConditionalRenderProps) => {
-  return when ? render : fallback;
-};
+function Show({ render, when, fallback = null }: ShowProps) {
+  return when ? <>{render}</> : <>{fallback}</>
+}
+
+export { Show }

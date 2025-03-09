@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import localFont from "next/font/local";
 import "./globals.css";
+import { AppSidebar, AppSidebarTrigger } from "@/components/sidebar";
+import { ChevronRight } from "lucide-react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -28,7 +31,11 @@ export default function RootLayout({
       <body
         className={`text-zinc-800 ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <SidebarProvider>
+          <AppSidebar />
+          <AppSidebarTrigger />
+          {children}
+        </SidebarProvider>
       </body>
     </html>
   );

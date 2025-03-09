@@ -49,7 +49,10 @@ export function LoginForm({
             </>
           </Button>
         </div>
-        <Button type="submit" className="bg-blue-light w-full">
+        <Button
+          type="submit"
+          className="bg-blue-light w-full hover:bg-blue-light/70"
+        >
           Login
         </Button>
       </div>
