@@ -1,11 +1,9 @@
-import OccurrencesProvider from "@/context/OccurrencesContext";
-import { MOCK_OCCURRENCES_RESPONSE } from "@/mocks/occurrences";
+import Dashboard from "./components/Dashboard";
 
 export default async function Home() {
   return (
-    <OccurrencesProvider initialOccurrences={MOCK_OCCURRENCES_RESPONSE}>
-        <div className="w-full h-dvh">
-        </div>
-    </OccurrencesProvider>
+     <main className="mx-auto w-full py-8 pr-8">
+      <Dashboard />
+    </main>
   );
 }

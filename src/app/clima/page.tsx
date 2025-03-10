@@ -1,7 +1,9 @@
-export default function Page(){
-    return (
-		<>
-			<h1>Hello Page</h1>
-		</>
-	)
+import CategoriasCharts from "./components/categorias-charts";
+
+export default function CategoriasPage() {
+  return (
+     <main className="mx-auto w-full py-8 pr-8">
+      <CategoriasCharts />
+    </main>
+  )
 }

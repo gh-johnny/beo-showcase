@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import localFont from "next/font/local";
 import "./globals.css";
 import { AppSidebar, AppSidebarTrigger } from "@/components/sidebar";
-import { ChevronRight } from "lucide-react";
+import OccurrencesProvider from "@/context/OccurrencesContext";
+import { MOCK_OCCURRENCES_RESPONSE } from "@/mocks/occurrences";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -31,11 +32,13 @@ export default function RootLayout({
       <body
         className={`text-zinc-800 ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SidebarProvider>
-          <AppSidebar />
-          <AppSidebarTrigger />
-          {children}
-        </SidebarProvider>
+        <OccurrencesProvider initialOccurrences={MOCK_OCCURRENCES_RESPONSE}>
+          <SidebarProvider>
+            <AppSidebar />
+            <AppSidebarTrigger />
+            {children}
+          </SidebarProvider>
+        </OccurrencesProvider>
       </body>
     </html>
   );
