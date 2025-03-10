@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import localFont from "next/font/local";
 import "./globals.css";
-import { AppSidebar, AppSidebarTrigger } from "@/components/sidebar";
+import { AppSidebar } from "@/components/sidebar";
 import OccurrencesProvider from "@/context/OccurrencesContext";
 import { MOCK_OCCURRENCES_RESPONSE } from "@/mocks/occurrences";
 
