@@ -15,6 +15,7 @@ const categories = ["Categoria A", "Categoria B", "Categoria C", "Categoria D"]
 
 // Dados simulados para os bairros
 const generateData = (startDate: Date, endDate: Date) => {
+  console.log(startDate, endDate)
   const bairros = [
     "Centro",
     "Copacabana",

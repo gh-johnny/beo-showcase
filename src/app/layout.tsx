@@ -35,7 +35,6 @@ export default function RootLayout({
         <OccurrencesProvider initialOccurrences={MOCK_OCCURRENCES_RESPONSE}>
           <SidebarProvider>
             <AppSidebar />
-            <AppSidebarTrigger />
             {children}
           </SidebarProvider>
         </OccurrencesProvider>

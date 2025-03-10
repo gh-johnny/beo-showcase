@@ -31,36 +31,42 @@ export const AppSidebar: React.FC<React.ComponentProps<typeof Sidebar>> = ({ ...
   })
 
   return (
-    <Sidebar collapsible={isMobile ? "offcanvas" : "icon"} {...props}>
-      <Show
-        when={isMobile}
-        render={
-          <>
-            <DialogTitle className="absolute -z-50 bg-transparent text-transparent">
-              <span className="sr-only">Sidebar</span>
-            </DialogTitle>
-            <DialogDescription className="absolute -z-50 bg-transparent text-transparent">
-              <span className="sr-only">Sidebar</span>
-            </DialogDescription>
-          </>
-        }
-      />
+    <Sidebar
+      collapsible={isMobile ? "offcanvas" : "icon"} {...props}
+    >
+      <div className="relative w-full flex flex-col justify-center items-center h-full">
+        <AppSidebarTrigger />
 
-      <SidebarHeader>
-        <LogoSideBar />
-      </SidebarHeader>
+        <Show
+          when={isMobile}
+          render={
+            <>
+              <DialogTitle className="absolute -z-50 bg-transparent text-transparent">
+                <span className="sr-only">Sidebar</span>
+              </DialogTitle>
+              <DialogDescription className="absolute -z-50 bg-transparent text-transparent">
+                <span className="sr-only">Sidebar</span>
+              </DialogDescription>
+            </>
+          }
+        />
 
-      <SidebarContent
-        data-ismobile={isMobile}
-        className="group-data-[state=collapsed]:mx-auto group-data-[state=expanded]:px-2 data-[ismobile=true]:mx-auto"
-      >
-        <NavSideBar />
-        <SidebarConfig />
-      </SidebarContent>
+        <SidebarHeader>
+          <LogoSideBar />
+        </SidebarHeader>
 
-      <SidebarFooter>
-        <SidebarRail />
-      </SidebarFooter>
+        <SidebarContent
+          data-ismobile={isMobile}
+          className="group-data-[state=collapsed]:mx-auto group-data-[state=expanded]:px-2 data-[ismobile=true]:mx-auto"
+        >
+          <NavSideBar />
+          <SidebarConfig />
+        </SidebarContent>
+
+        <SidebarFooter>
+          <SidebarRail />
+        </SidebarFooter>
+      </div>
     </Sidebar>
   )
 }
@@ -197,7 +203,7 @@ export const AppSidebarTrigger: React.FC = () => {
   return (
     <SidebarTrigger
       data-expanded={open}
-      className="transition-all duration-500 m-1 min-w-6 w-6 min-h-6 h-6 data-[expanded=true]:rotate-180"
+      className="absolute top-1 -right-10 border transition-all duration-500 m-1 min-w-6 w-6 min-h-6 h-6 data-[expanded=true]:rotate-180"
       icon={isMobile ? Menu : ChevronRight}
     />
   )

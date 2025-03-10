@@ -16,6 +16,7 @@ const intensidades = ["Baixa", "Média", "Alta"]
 
 // Gera dados simulados para os bairros com intensidades
 const generateDataWithIntensities = (startDate: Date, endDate: Date) => {
+  console.log(startDate, endDate)
   const bairros = [
     "Centro",
     "Copacabana",
@@ -32,7 +33,8 @@ const generateDataWithIntensities = (startDate: Date, endDate: Date) => {
   // Gera dados aleatórios para cada bairro com intensidades
   return bairros
     .map((bairro) => {
-      const data: Record<string, unknown> = { bairro }
+      //eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const data: Record<string, any> = { bairro }
 
       // Para cada categoria, gerar valores para cada intensidade
       categories.forEach((category) => {

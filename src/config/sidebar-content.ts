@@ -1,5 +1,5 @@
 import { NAV_PATHS } from "@/types/nav-types";
-import { FileText, Home, LogIn, LogOut, LucideProps } from "lucide-react";
+import { FileText, Home, LogOut, LucideProps } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 import { useRouter } from "next/router";
 
