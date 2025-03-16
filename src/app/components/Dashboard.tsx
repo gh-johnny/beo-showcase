@@ -1,7 +1,7 @@
 "use client"
 
 import { TrendingDown, TrendingUp } from "lucide-react"
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts"
 import {
   ChartConfig,
   ChartContainer,
@@ -28,7 +28,6 @@ type TCardOutput = {
 
 function transformPointsToGroupStats(points: TPoint[]): TCardOutput[] {
   const currentDate = new Date('2025-03-16T00:00:00Z'); // Current date (Sunday, March 16, 2025)
-  const oneWeekAgo = new Date('2025-03-09T00:00:00Z');  // One week ago (Sunday, March 9, 2025)
 
   // Initialize objects to store counts by group
   const groupCounts: { [key: string]: { pastWeek: number, thisWeek: number, open: number, closed: number } } = {};
@@ -44,7 +43,7 @@ function transformPointsToGroupStats(points: TPoint[]): TCardOutput[] {
   points.forEach(point => {
     const pointDate = new Date(point.date);
 
-    if (pointDate >= oneWeekAgo && pointDate < currentDate) {
+    if (pointDate < currentDate) {
       groupCounts[point.group].pastWeek++;
     } else if (pointDate >= currentDate) {
       groupCounts[point.group].thisWeek++;
@@ -145,7 +144,7 @@ export default function Dashboard() {
           <Card
             key={i}
             data-active={cardPressed[item.groupName as TGroups]}
-            className="data-[active=true]:bg-blue-primary data-[active=true]:text-white group hover:bg-blue-primary hover:text-white cursor-pointer flex flex-col justify-between flex-1 w-full py-3 px-3"
+            className="data-[active=true]:border-blue-primary group hover:border-blue-primary cursor-pointer flex flex-col justify-between flex-1 w-full py-3 px-3"
             onClick={() => clickFilterCard(item.groupName as TGroups)}
           >
             <CardHeader className="p-0">
@@ -161,13 +160,13 @@ export default function Dashboard() {
                     (últimos 7 dias)
                   </span>
                 </div>
-                <div className={`flex items-center ${item.trend <= 0 ? "text-green-500" : "text-red-500"} group-data-[active=true]:text-white group-hover:text-white`}>
+                <div className={`flex items-center ${item.trend <= 0 ? "text-green-500" : "text-red-500"}`}>
                   {item.trend >= 0 ? (
                     <TrendingUp className="h-4 w-4 mr-2" />
                   ) : (
                     <TrendingDown className="h-4 w-4 mr-2" />
                   )}
-                  <span className="text-sm font-medium">{Math.abs(item.trend)}%</span>
+                  <span className="font-medium">{Math.abs(item.trend)}%</span>
                 </div>
               </div>
               <div className="flex gap-1 text-xs mt-1">
@@ -237,17 +236,10 @@ export function StackChart({ data }: { data: TCardOutput[] | GroupedPoint[] }) {
     aberto: p.open
   }))
 
-    // { month: "Água suja", fechado: 73, aberto: 190 },
-  // { month: "Baixa Pressão", fechado: 237, aberto: 120 },
-  // { month: "Falta de Água", fechado: 73, aberto: 190 },
-  // { month: "Vazamento de Água", fechado: 186, aberto: 80 },
-  // { month: "Vazamento Esgoto", fechado: 305, aberto: 200 },
-
-
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Ocorrências nos últimos 7 dias</CardTitle>
+        <CardTitle>Ocorrências nos últimos 14 dias</CardTitle>
       </CardHeader>
       <CardContent className="px-2">
         <ChartContainer config={chartConfig}>
@@ -268,25 +260,42 @@ export function StackChart({ data }: { data: TCardOutput[] | GroupedPoint[] }) {
               stackId="a"
               fill="#444e5a"
               radius={[0, 0, 4, 4]}
-            />
+            >
+              <LabelList
+                dataKey="fechado"
+                position="center"
+                fill="#fff"
+                offset={12}
+                fontSize={12}
+              />
+            </Bar>
             <Bar
               dataKey="aberto"
               stackId="a"
               fill="#4292cf"
               radius={[4, 4, 0, 0]}
-
-            />
+            >
+              <LabelList
+                dataKey="aberto"
+                position="center"
+                fill="#fff"
+                offset={12}
+                fontSize={12}
+              />
+            </Bar>
           </BarChart>
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          Aumento de ocorrências em
-          <span className="text-rose-500">
-            5.2%
-          </span>
-          <TrendingUp className="text-rose-500 h-4 w-4" />
-        </div>
+        {
+          // <div className="flex gap-2 font-medium leading-none">
+          //   Aumento de ocorrências em
+          //   <span className="text-rose-500">
+          //     5.2%
+          //   </span>
+          //   <TrendingUp className="text-rose-500 h-4 w-4" />
+          // </div>
+        }
       </CardFooter>
     </Card>
   )

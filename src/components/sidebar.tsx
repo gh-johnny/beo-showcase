@@ -34,7 +34,7 @@ export const AppSidebar: React.FC<React.ComponentProps<typeof Sidebar>> = ({ ...
     <Sidebar
       collapsible={isMobile ? "offcanvas" : "icon"} {...props}
     >
-      <div className="relative w-full flex flex-col justify-center items-center h-full">
+      <div className="py-4 relative w-full flex flex-col justify-center items-center h-full">
         <AppSidebarTrigger />
 
         <Show
@@ -51,20 +51,22 @@ export const AppSidebar: React.FC<React.ComponentProps<typeof Sidebar>> = ({ ...
           }
         />
 
-        <SidebarHeader>
-          <LogoSideBar />
-        </SidebarHeader>
-
-        <SidebarContent
+        <SidebarHeader
           data-ismobile={isMobile}
           className="group-data-[state=collapsed]:mx-auto group-data-[state=expanded]:px-2 data-[ismobile=true]:mx-auto"
         >
           <NavSideBar />
-          <SidebarConfig />
+          {
+            // <LogoSideBar />
+          }
+        </SidebarHeader>
+
+        <SidebarContent>
         </SidebarContent>
 
         <SidebarFooter>
           <SidebarRail />
+          <SidebarConfig />
         </SidebarFooter>
       </div>
     </Sidebar>
@@ -74,7 +76,7 @@ export const AppSidebar: React.FC<React.ComponentProps<typeof Sidebar>> = ({ ...
 const NavSideBar: React.FC = () => {
   const path = usePathname()
   return (
-    <section className="mt-12">
+    <section>
       <TooltipProvider>
         <ToggleGroup value={path} type="single" className="flex flex-col gap-3">
           <List
@@ -95,7 +97,7 @@ const NavSideBar: React.FC = () => {
                       <div
                         data-active-route={path === route.path}
                         data-disabled-link={!route.active}
-                        className="hover:border-zinc-500 border border-transparent rounded w-full h-full flex justify-center items-center data-[active-route=true]:border-blue-primary"
+                        className="hover:border-gray-primary border border-transparent rounded w-full h-full flex justify-center items-center data-[active-route=true]:border-blue-primary"
                       >
                         <Show
                           when={typeof route.icon === 'string'}
@@ -109,7 +111,7 @@ const NavSideBar: React.FC = () => {
                             />
                           }
                           fallback={
-                            <route.icon className="text-blue-link" strokeWidth={1} />
+                            <route.icon className="text-blue-primary" strokeWidth={2} />
                           }
                         />
                       </div>
@@ -136,7 +138,7 @@ const NavSideBar: React.FC = () => {
 
 const SidebarConfig: React.FC = () => {
   return (
-    <section className="mt-12 flex gap-3 flex-col">
+    <section className="flex gap-3 flex-col">
       <TooltipProvider>
         <List
           items={SIDEBAR_CONFIG}
@@ -158,7 +160,7 @@ const SidebarConfig: React.FC = () => {
                         />
                       }
                       fallback={
-                        <item.icon className="text-blue-link" strokeWidth={1} />
+                        <item.icon className="text-white" strokeWidth={2} />
                       }
                     />
                   </picture>

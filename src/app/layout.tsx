@@ -30,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`text-zinc-800 ${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`bg-[#f2f2f2] text-gray-primary ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <OccurrencesProvider initialOccurrences={MOCK_OCCURRENCES_RESPONSE}>
           <SidebarProvider>
@@ -43,4 +43,11 @@ export default function RootLayout({
       </body>
     </html>
   );
+}
+
+function Footer() {
+  return(
+    <>
+    </>
+  )
 }

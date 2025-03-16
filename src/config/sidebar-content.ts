@@ -1,7 +1,6 @@
 import { NAV_PATHS } from "@/types/nav-types";
-import { FileText, Home, LogOut, LucideProps } from "lucide-react";
+import { Home, LucideProps, Settings, UserRound } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
-import { useRouter } from "next/router";
 
 type routesContent = {
   path: NAV_PATHS,
@@ -53,18 +52,13 @@ export const SIDEBAR_ROUTE_CONTENT: routesContent[] = [
 
 export const SIDEBAR_CONFIG: sidebarConfig[] = [
   {
-    text: 'Exportar PDF',
+    text: 'Configurações',
     active: true,
-    icon: FileText,
-    action: () => console.log('exportar para pdf')
+    icon: Settings,
   },
   {
-    text: 'Log out',
+    text: 'Usuário',
     active: true,
-    icon: LogOut,
-    useAction: () => {
-      const router = useRouter()
-      router.push("/login")
-    }
+    icon: UserRound,
   }
 ]
