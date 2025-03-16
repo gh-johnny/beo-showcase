@@ -1,6 +1,6 @@
 "use client"
 
-import { TrendingUp } from "lucide-react"
+import { TrendingDown, TrendingUp } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import {
   ChartConfig,
@@ -12,61 +12,167 @@ import {
 } from "@/components/ui/chart"
 
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, } from "@/components/ui/card"
-import { ArrowDownIcon, ArrowUpIcon } from "lucide-react"
-import { MapHome } from "@/components/map"
+import { MapHome, TPoint } from "@/components/map"
+import { mockPointsWithEvento } from "@/mocks/occurrences"
+import { useState } from "react"
 
-// Dados simulados para as categorias
-const categories = ["Saneamento Básico", "Transporte Público", "Clima", "Vias e Áreas Públicas"]
 
-const generateWeeklyComparison = () => {
-  return categories.map((category) => {
-    const currentWeek = 50;
-    const previousWeek = 50;
-    const percentChange = previousWeek > 0 ? ((currentWeek - previousWeek) / previousWeek) * 100 : 0
-
-    return {
-      category,
-      currentWeek,
-      previousWeek,
-      percentChange: Number.parseFloat(percentChange.toFixed(2)),
-    }
-  })
+type TCardOutput = {
+  groupName: string,
+  totalPastWeek: number,
+  totalThisWeek: number,
+  trend: number
+  open: number
+  closed: number
 }
 
+function transformPointsToGroupStats(points: TPoint[]): TCardOutput[] {
+  const currentDate = new Date('2025-03-16T00:00:00Z'); // Current date (Sunday, March 16, 2025)
+  const oneWeekAgo = new Date('2025-03-09T00:00:00Z');  // One week ago (Sunday, March 9, 2025)
+
+  // Initialize objects to store counts by group
+  const groupCounts: { [key: string]: { pastWeek: number, thisWeek: number, open: number, closed: number } } = {};
+
+  // First pass: collect all unique groups
+  points.forEach(point => {
+    if (!groupCounts[point.group]) {
+      groupCounts[point.group] = { pastWeek: 0, thisWeek: 0, open: 0, closed: 0 };
+    }
+  });
+
+  // Second pass: count occurrences by week
+  points.forEach(point => {
+    const pointDate = new Date(point.date);
+
+    if (pointDate >= oneWeekAgo && pointDate < currentDate) {
+      groupCounts[point.group].pastWeek++;
+    } else if (pointDate >= currentDate) {
+      groupCounts[point.group].thisWeek++;
+    }
+
+    if (point.isOpen) {
+      groupCounts[point.group].open++;
+    } else {
+      groupCounts[point.group].closed++;
+    }
+  });
+
+  // Transform to the required output format
+  const result = Object.entries(groupCounts).map(([groupName, counts]) => {
+    const trend = counts.pastWeek > 0
+      ? ((counts.thisWeek - counts.pastWeek) / counts.pastWeek) * 100
+      : counts.thisWeek > 0 ? 100 : 0;
+
+    return {
+      groupName,
+      totalPastWeek: counts.pastWeek,
+      totalThisWeek: counts.thisWeek,
+      trend: Number(trend.toFixed(1)),
+      open: counts.open,
+      closed: counts.closed,
+    };
+  });
+
+  return result;
+}
+
+type GroupedPoint = {
+  groupName: string;
+  open: number;
+  closed: number;
+};
+
+const groupByName = (points: TPoint[], groupName?: string): GroupedPoint[] => {
+  const filteredPoints = groupName
+    ? points.filter((point) => point.group === groupName)
+    : points;
+
+  return filteredPoints.reduce((acc, point) => {
+    const existingGroup = acc.find((item) => item.groupName === point.name);
+
+    if (existingGroup) {
+      if (point.isOpen) {
+        existingGroup.open += 1;
+      } else {
+        existingGroup.closed += 1;
+      }
+    } else {
+      acc.push({
+        groupName: point.name,
+        open: point.isOpen ? 1 : 0,
+        closed: point.isOpen ? 0 : 1,
+      });
+    }
+
+    return acc;
+  }, [] as GroupedPoint[]);
+};
+
+type TGroups = 'Transporte Público' | 'Vias e Áreas Públicas' | 'Saneamento Básico' | 'Clima'
+
 export default function Dashboard() {
-  const weeklyComparison = generateWeeklyComparison()
+  const cards = transformPointsToGroupStats(mockPointsWithEvento)
+
+  const [cardInfoForChart, setCardInfoForChart] = useState<TCardOutput[] | GroupedPoint[]>(cards)
+
+  const [cardPressed, setCardPressed] = useState<{ [key in TGroups]: boolean }>({
+    'Clima': false,
+    'Saneamento Básico': false,
+    'Vias e Áreas Públicas': false,
+    'Transporte Público': false,
+  })
+
+  const clickFilterCard = (groupName: TGroups) => {
+    let isAllInactive
+    setCardPressed(prev => {
+      const obj = {
+        'Clima': false,
+        'Saneamento Básico': false,
+        'Vias e Áreas Públicas': false,
+        'Transporte Público': false,
+        [groupName]: !prev[groupName]
+      }
+      isAllInactive = Object.values(obj).filter(v => v === false).length === Object.keys(obj).length
+      return obj
+    })
+    setCardInfoForChart(isAllInactive ? cards : groupByName(mockPointsWithEvento, groupName))
+  }
 
   return (
     <div className="space-y-4">
-      {/* Indicadores de crescimento/redução */}
       <div className="flex gap-4">
-        {weeklyComparison.map((item) => (
-          <Card key={item.category} className="group hover:bg-blue-primary hover:text-white cursor-pointer flex flex-col justify-between flex-1 w-full py-3 px-3">
+        {cards.map((item, i) => (
+          <Card
+            key={i}
+            data-active={cardPressed[item.groupName as TGroups]}
+            className="data-[active=true]:bg-blue-primary data-[active=true]:text-white group hover:bg-blue-primary hover:text-white cursor-pointer flex flex-col justify-between flex-1 w-full py-3 px-3"
+            onClick={() => clickFilterCard(item.groupName as TGroups)}
+          >
             <CardHeader className="p-0">
-              <CardTitle className="text-sm font-bold">{item.category}</CardTitle>
+              <CardTitle className="text-sm font-bold">{item.groupName}</CardTitle>
             </CardHeader>
             <CardContent className="p-0 w-full flex flex-col">
               <div className="flex items-center justify-between">
                 <div className="flex items-end gap-1">
                   <span className="text-2xl font-bold">
-                    {item.currentWeek}
+                    {item.totalThisWeek}
                   </span>
                   <span className="text-xs">
                     (últimos 7 dias)
                   </span>
                 </div>
-                <div className={`flex items-center ${item.percentChange >= 0 ? "text-green-500" : "text-red-500"} group-hover:text-white`}>
-                  {item.percentChange >= 0 ? (
-                    <ArrowUpIcon className="h-4 w-4 mr-1" />
+                <div className={`flex items-center ${item.trend <= 0 ? "text-green-500" : "text-red-500"} group-data-[active=true]:text-white group-hover:text-white`}>
+                  {item.trend >= 0 ? (
+                    <TrendingUp className="h-4 w-4 mr-2" />
                   ) : (
-                    <ArrowDownIcon className="h-4 w-4 mr-1" />
+                    <TrendingDown className="h-4 w-4 mr-2" />
                   )}
-                  <span className="text-sm font-medium">{Math.abs(item.percentChange)}%</span>
+                  <span className="text-sm font-medium">{Math.abs(item.trend)}%</span>
                 </div>
               </div>
               <div className="flex gap-1 text-xs mt-1">
                 <span>
-                  {item.previousWeek}
+                  {item.totalPastWeek}
                 </span>
                 <span>
                   (semana anterior)
@@ -81,7 +187,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="p-0 w-full flex flex-col">
             <div className="items-center justify-between">
-              <div className="flex items-end gap-1">
+              <div className="text-blue-primary flex items-end gap-1">
                 <span className="text-2xl font-bold">
                   6
                 </span>
@@ -90,7 +196,7 @@ export default function Dashboard() {
                 </span>
               </div>
               <div className="flex items-end gap-1">
-                <span className="text-2xl font-bold">
+                <span className="text-xl font-bold">
                   7
                 </span>
                 <span>
@@ -102,30 +208,15 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      {/* Seção de gráficos em grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="p-2">
-          <MapHome />
+          <MapHome initialPoints={[]} />
         </Card>
-        {/* Gráfico por categoria selecionada */}
-        <StackChart />
+        <StackChart data={cardInfoForChart} />
       </div>
     </div>
   )
 }
-
-const chartData = [
-  { month: "Saneamento Básico", fechado: 186, aberto: 80 },
-  { month: "Transporte Público", fechado: 305, aberto: 200 },
-  { month: "Clima", fechado: 237, aberto: 120 },
-  { month: "Vias e Áreas Públicas", fechado: 73, aberto: 190 },
-
-  // { month: "Água suja", fechado: 73, aberto: 190 },
-  // { month: "Baixa Pressão", fechado: 237, aberto: 120 },
-  // { month: "Falta de Água", fechado: 73, aberto: 190 },
-  // { month: "Vazamento de Água", fechado: 186, aberto: 80 },
-  // { month: "Vazamento Esgoto", fechado: 305, aberto: 200 },
-]
 
 const chartConfig = {
   fechado: {
@@ -138,7 +229,21 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export function StackChart() {
+export function StackChart({ data }: { data: TCardOutput[] | GroupedPoint[] }) {
+
+  const chartData = data.map(p => ({
+    group: p.groupName,
+    fechado: p.closed,
+    aberto: p.open
+  }))
+
+    // { month: "Água suja", fechado: 73, aberto: 190 },
+  // { month: "Baixa Pressão", fechado: 237, aberto: 120 },
+  // { month: "Falta de Água", fechado: 73, aberto: 190 },
+  // { month: "Vazamento de Água", fechado: 186, aberto: 80 },
+  // { month: "Vazamento Esgoto", fechado: 305, aberto: 200 },
+
+
   return (
     <Card>
       <CardHeader>
@@ -151,11 +256,10 @@ export function StackChart() {
             accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="group"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-            // tickFormatter={(value) => value.slice(0, 3)}
             />
             <ChartTooltip content={<ChartTooltipContent hideLabel />} />
             <ChartLegend content={<ChartLegendContent />} />
