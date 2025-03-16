@@ -45,7 +45,7 @@ export const SIDEBAR_ROUTE_CONTENT: routesContent[] = [
   },
   {
     path: '/transporte-urbano',
-    text: 'Transporte Urbano',
+    text: 'Transporte Público',
     active: true,
     icon: '/transporte.png'
   },

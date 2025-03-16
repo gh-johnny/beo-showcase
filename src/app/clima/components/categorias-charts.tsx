@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import type { DateRange } from "react-day-picker"
 import { subDays } from "date-fns"
 import { Bar, BarChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from "recharts"
@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DateRangePicker } from "@/components/date-range-picker"
 
 // Categorias
-const categories = ["Categoria A", "Categoria B", "Categoria C", "Categoria D"]
+const categories = ["Saneamento Básico", "Transporte Público", "Clima", "Vias e Áreas Públicas"]
 
 // Intensidades para cada categoria
 const intensidades = ["Baixa", "Média", "Alta"]
@@ -19,39 +19,27 @@ const generateDataWithIntensities = (startDate: Date, endDate: Date) => {
   console.log(startDate, endDate)
   const bairros = [
     "Centro",
-    "Copacabana",
-    "Ipanema",
-    "Leblon",
-    "Botafogo",
-    "Flamengo",
-    "Tijuca",
-    "Méier",
-    "Madureira",
-    "Barra da Tijuca",
+    "Jardim São Francisco",
+    "Jardim Europa",
+    "Jardim Cândido Bertini",
+    "Vila Mollon IV",
+    "Jardim Pérola",
+    "Jardim Souza Queiroz",
+    "Residencial Furlan",
+    "Jardim Belo Horizonte",
+    "Vila Grego",
+    "Jardim São Fernando"
   ]
 
   // Gera dados aleatórios para cada bairro com intensidades
   return bairros
     .map((bairro) => {
-      //eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const data: Record<string, any> = { bairro }
 
-      // Para cada categoria, gerar valores para cada intensidade
       categories.forEach((category) => {
         intensidades.forEach((intensidade) => {
-          // Gera valores diferentes baseados na categoria e intensidade
-          let multiplier = 1
-          if (intensidade === "Média") multiplier = 0.7
-          if (intensidade === "Alta") multiplier = 0.4
-
-          // Valor base depende da categoria
-          let baseValue = 0
-          if (category === "Categoria A") baseValue = 1000
-          if (category === "Categoria B") baseValue = 800
-          if (category === "Categoria C") baseValue = 600
-          if (category === "Categoria D") baseValue = 400
-
-          data[`${category} - ${intensidade}`] = Math.floor(Math.random() * baseValue * multiplier)
+          data[`${category} - ${intensidade}`] = 50
         })
 
         // Adiciona o total para cada categoria
@@ -62,8 +50,7 @@ const generateDataWithIntensities = (startDate: Date, endDate: Date) => {
       return data
     })
     .sort((a, b) => {
-      // Ordena por total da Categoria A (poderia ser qualquer outra)
-      return b["Categoria A - Total"] - a["Categoria A - Total"]
+      return b["Saneamento Básico - Total"] - a["Saneamento Básico - Total"]
     })
 }
 
@@ -75,14 +62,18 @@ const intensityColors = {
 }
 
 export default function CategoriasCharts() {
-  // Estado para o seletor de intervalo de datas
   const [date, setDate] = useState<DateRange | undefined>({
     from: subDays(new Date(), 7),
     to: new Date(),
   })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [data, setData] = useState<any[]>([])
 
-  // Gera dados com base no intervalo de datas
-  const data = generateDataWithIntensities(date?.from || subDays(new Date(), 7), date?.to || new Date())
+  useEffect(() => {
+    if (date) {
+      setData(generateDataWithIntensities(date.from!, date.to!))
+    }
+  }, [date])
 
   return (
     <div className="space-y-6">
@@ -90,7 +81,6 @@ export default function CategoriasCharts() {
         <DateRangePicker date={date} onDateChange={setDate} />
       </div>
 
-      {/* Grid de gráficos - 2x2 em telas grandes */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {categories.map((category) => (
           <Card key={category} className="h-full">

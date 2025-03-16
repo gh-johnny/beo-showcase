@@ -35,7 +35,9 @@ export default function RootLayout({
         <OccurrencesProvider initialOccurrences={MOCK_OCCURRENCES_RESPONSE}>
           <SidebarProvider>
             <AppSidebar />
-            {children}
+            <div className="w-full pl-4">
+              {children}
+            </div>
           </SidebarProvider>
         </OccurrencesProvider>
       </body>
