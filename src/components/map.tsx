@@ -13,6 +13,7 @@ const SANTA_BARBARA_LAT = '-22.7557' as const
 const SANTA_BARBARA_LON = '-47.4145' as const
 
 import { Card } from './ui/card'
+
 interface LatLngLiteral {
   lat: number
   lng: number
@@ -24,13 +25,14 @@ interface LatLng {
 }
 
 export type TPoint = {
-  name: string
+  event: string
   lat: string | number
   lng: string | number
-  key: string
+  key: number
   isOpen: boolean
-  group: string
+  category: string
   date: string
+  intensity: string | string[] | null
 }
 
 export function MapHome({ initialPoints }: { initialPoints: TPoint[] }) {
@@ -107,10 +109,10 @@ function Markers({ points }: TMarkerProps) {
         return (
           <AdvancedMarker
             key={point.key}
-            ref={(marker) => setMarkerRef(marker, point.key)}
+            ref={(marker) => setMarkerRef(marker, point.key.toString())}
             position={point as LatLngLiteral | LatLng | null | undefined}
           >
-            <div className='relative group w-fit h-fit'>
+            <div className='relative category w-fit h-fit'>
               <Image
                 className=""
                 src={'/marcador_mapa.png'}
@@ -118,8 +120,10 @@ function Markers({ points }: TMarkerProps) {
                 width={25}
                 height={25}
               />
-              <div className='bg-white whitespace-nowrap p-2 rounded-lg border absolute -top-10 left-0 hidden group-hover:block'>
-                {point.name}
+              <div className='bg-white whitespace-nowrap p-2 rounded-lg border absolute -top-10 left-0 hidden category-hover:block'>
+                {point.event}
+                {point.intensity?.toString()}
+                {point.date}
               </div>
             </div>
           </AdvancedMarker>

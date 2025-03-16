@@ -86,7 +86,7 @@ const NavSideBar: React.FC = () => {
                 <TooltipTrigger asChild>
                   <Link
                     href={!route.active ? path : route.path}
-                    className="flex items-center gap-4 rounded w-full"
+                    className="flex items-center gap-4 w-full"
                   >
                     <ToggleGroupItem
                       value={route.path}
@@ -97,7 +97,7 @@ const NavSideBar: React.FC = () => {
                       <div
                         data-active-route={path === route.path}
                         data-disabled-link={!route.active}
-                        className="hover:border-gray-primary border border-transparent rounded w-full h-full flex justify-center items-center data-[active-route=true]:border-blue-primary"
+                        className="hover:text-gray-primary text-white hover:border-gray-primary border border-transparent w-full h-full flex justify-center items-center"
                       >
                         <Show
                           when={typeof route.icon === 'string'}
@@ -111,7 +111,11 @@ const NavSideBar: React.FC = () => {
                             />
                           }
                           fallback={
-                            <route.icon className="text-blue-primary" strokeWidth={2} />
+                            <route.icon
+                              data-active-route={path === route.path}
+                              className="data-[active-route=true]:text-blue-primary"
+                              strokeWidth={2}
+                            />
                           }
                         />
                       </div>
@@ -146,9 +150,9 @@ const SidebarConfig: React.FC = () => {
             <Tooltip key={i}>
               <TooltipTrigger>
                 <div
-                  className="w-full h-full flex items-center gap-6 rounded data-[active-route=true]:bg-blue-primary data-[active-route=true]:text-white"
+                  className="transition-all text-white hover:text-gray-primary hover:bg-white w-full h-full flex items-center gap-6 rounded data-[active-route=true]:bg-blue-primary data-[active-route=true]:text-white"
                 >
-                  <picture className="border border-transparent rounded hover:border-zinc-500 flex justify-center items-center min-w-8 w-8 min-h-8 h-8 p-[6px]">
+                  <picture className="rounded flex justify-center items-center min-w-8 w-8 min-h-8 h-8 p-[6px]">
                     <Show
                       when={typeof item.icon === 'string'}
                       render={
@@ -160,7 +164,7 @@ const SidebarConfig: React.FC = () => {
                         />
                       }
                       fallback={
-                        <item.icon className="text-white" strokeWidth={2} />
+                        <item.icon className="" strokeWidth={2} />
                       }
                     />
                   </picture>
@@ -180,22 +184,6 @@ const SidebarConfig: React.FC = () => {
         />
       </TooltipProvider>
     </section>
-  )
-}
-
-const LogoSideBar: React.FC = () => {
-  return (
-    <>
-      <section className="flex justify-center items-center h-full">
-        <Image
-          src="/logo_beo_transparent.png"
-          alt=""
-          width={80}
-          height={80}
-          priority
-        />
-      </section>
-    </>
   )
 }
 

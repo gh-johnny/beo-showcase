@@ -1,1 +1,2 @@
-export type NAV_PATHS = '/' | '/home' | '/clima' | '/saneamento-basico' | '/vias-e-areas-publicas' | '/transporte-urbano'
+export type NAV_PATHS = '/' | '/home' | '/defesa-civil' | '/saneamento-basico' | '/vias-e-areas-publicas' | '/mobilidade-urbana'
+    

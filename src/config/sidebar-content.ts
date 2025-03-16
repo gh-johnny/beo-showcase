@@ -1,5 +1,5 @@
 import { NAV_PATHS } from "@/types/nav-types";
-import { Home, LucideProps, Settings, UserRound } from "lucide-react";
+import { BusFront, DropletOff, Home, LucideProps, Settings, Trees, TriangleAlert, UserRound } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 
 type routesContent = {
@@ -25,28 +25,28 @@ export const SIDEBAR_ROUTE_CONTENT: routesContent[] = [
     icon: Home
   },
   {
-    path: '/clima',
-    text: 'Clima',
+    path: '/saneamento-basico',
+    text: 'Saneamento básico',
     active: true,
-    icon: '/clima.png'
+    icon: DropletOff
   },
   {
-    path: '/saneamento-basico',
-    text: 'Saneamento Básico',
+    path: '/defesa-civil',
+    text: 'Defesa civil',
     active: true,
-    icon: '/saneamento.png'
+    icon: TriangleAlert
   },
   {
     path: '/vias-e-areas-publicas',
-    text: 'Vias e Áreas Públicas',
+    text: 'Vias e áreas públicas',
     active: true,
-    icon: '/vias.png'
+    icon: Trees
   },
   {
-    path: '/transporte-urbano',
-    text: 'Transporte Público',
+    path: '/mobilidade-urbana',
+    text: 'Mobilidade urbana',
     active: true,
-    icon: '/transporte.png'
+    icon: BusFront
   },
 ]
 

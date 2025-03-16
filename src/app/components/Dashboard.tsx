@@ -15,10 +15,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter, } from "@/compone
 import { MapHome, TPoint } from "@/components/map"
 import { mockPointsWithEvento } from "@/mocks/occurrences"
 import { useState } from "react"
+import CategoryIcon, { TCategory } from "./category-icon"
 
 
 type TCardOutput = {
-  groupName: string,
+  category: TCategory,
   totalPastWeek: number,
   totalThisWeek: number,
   trend: number
@@ -29,13 +30,13 @@ type TCardOutput = {
 function transformPointsToGroupStats(points: TPoint[]): TCardOutput[] {
   const currentDate = new Date('2025-03-16T00:00:00Z'); // Current date (Sunday, March 16, 2025)
 
-  // Initialize objects to store counts by group
+  // Initialize objects to store counts by category
   const groupCounts: { [key: string]: { pastWeek: number, thisWeek: number, open: number, closed: number } } = {};
 
   // First pass: collect all unique groups
   points.forEach(point => {
-    if (!groupCounts[point.group]) {
-      groupCounts[point.group] = { pastWeek: 0, thisWeek: 0, open: 0, closed: 0 };
+    if (!groupCounts[point.category]) {
+      groupCounts[point.category] = { pastWeek: 0, thisWeek: 0, open: 0, closed: 0 };
     }
   });
 
@@ -44,26 +45,26 @@ function transformPointsToGroupStats(points: TPoint[]): TCardOutput[] {
     const pointDate = new Date(point.date);
 
     if (pointDate < currentDate) {
-      groupCounts[point.group].pastWeek++;
+      groupCounts[point.category].pastWeek++;
     } else if (pointDate >= currentDate) {
-      groupCounts[point.group].thisWeek++;
+      groupCounts[point.category].thisWeek++;
     }
 
     if (point.isOpen) {
-      groupCounts[point.group].open++;
+      groupCounts[point.category].open++;
     } else {
-      groupCounts[point.group].closed++;
+      groupCounts[point.category].closed++;
     }
   });
 
   // Transform to the required output format
-  const result = Object.entries(groupCounts).map(([groupName, counts]) => {
+  const result = Object.entries(groupCounts).map(([category, counts]) => {
     const trend = counts.pastWeek > 0
       ? ((counts.thisWeek - counts.pastWeek) / counts.pastWeek) * 100
       : counts.thisWeek > 0 ? 100 : 0;
 
     return {
-      groupName,
+      category,
       totalPastWeek: counts.pastWeek,
       totalThisWeek: counts.thisWeek,
       trend: Number(trend.toFixed(1)),
@@ -76,18 +77,18 @@ function transformPointsToGroupStats(points: TPoint[]): TCardOutput[] {
 }
 
 type GroupedPoint = {
-  groupName: string;
+  category: string;
   open: number;
   closed: number;
 };
 
-const groupByName = (points: TPoint[], groupName?: string): GroupedPoint[] => {
-  const filteredPoints = groupName
-    ? points.filter((point) => point.group === groupName)
+const groupByName = (points: TPoint[], category?: string): GroupedPoint[] => {
+  const filteredPoints = category
+    ? points.filter((point) => point.category === category)
     : points;
 
   return filteredPoints.reduce((acc, point) => {
-    const existingGroup = acc.find((item) => item.groupName === point.name);
+    const existingGroup = acc.find((item) => item.category === point.event);
 
     if (existingGroup) {
       if (point.isOpen) {
@@ -97,7 +98,7 @@ const groupByName = (points: TPoint[], groupName?: string): GroupedPoint[] => {
       }
     } else {
       acc.push({
-        groupName: point.name,
+        category: point.event,
         open: point.isOpen ? 1 : 0,
         closed: point.isOpen ? 0 : 1,
       });
@@ -107,80 +108,88 @@ const groupByName = (points: TPoint[], groupName?: string): GroupedPoint[] => {
   }, [] as GroupedPoint[]);
 };
 
-type TGroups = 'Transporte Público' | 'Vias e Áreas Públicas' | 'Saneamento Básico' | 'Clima'
 
 export default function Dashboard() {
   const cards = transformPointsToGroupStats(mockPointsWithEvento)
 
   const [cardInfoForChart, setCardInfoForChart] = useState<TCardOutput[] | GroupedPoint[]>(cards)
 
-  const [cardPressed, setCardPressed] = useState<{ [key in TGroups]: boolean }>({
-    'Clima': false,
-    'Saneamento Básico': false,
-    'Vias e Áreas Públicas': false,
-    'Transporte Público': false,
+  const [cardPressed, setCardPressed] = useState<{ [key in TCategory]: boolean }>({
+    'Defesa civil': false,
+    'Saneamento básico': false,
+    'Vias e áreas públicas': false,
+    'Mobilidade urbana': false,
   })
 
-  const clickFilterCard = (groupName: TGroups) => {
+  const clickFilterCard = (category: TCategory) => {
     let isAllInactive
     setCardPressed(prev => {
       const obj = {
-        'Clima': false,
-        'Saneamento Básico': false,
-        'Vias e Áreas Públicas': false,
-        'Transporte Público': false,
-        [groupName]: !prev[groupName]
+        'Defesa civil': false,
+        'Saneamento básico': false,
+        'Vias e áreas públicas': false,
+        'Mobilidade urbana': false,
+        [category]: !prev[category]
       }
       isAllInactive = Object.values(obj).filter(v => v === false).length === Object.keys(obj).length
       return obj
     })
-    setCardInfoForChart(isAllInactive ? cards : groupByName(mockPointsWithEvento, groupName))
+    setCardInfoForChart(isAllInactive ? cards : groupByName(mockPointsWithEvento, category))
   }
 
   return (
     <div className="space-y-4">
       <div className="flex gap-4">
-        {cards.map((item, i) => (
-          <Card
-            key={i}
-            data-active={cardPressed[item.groupName as TGroups]}
-            className="data-[active=true]:border-blue-primary group hover:border-blue-primary cursor-pointer flex flex-col justify-between flex-1 w-full py-3 px-3"
-            onClick={() => clickFilterCard(item.groupName as TGroups)}
-          >
-            <CardHeader className="p-0">
-              <CardTitle className="text-sm font-bold">{item.groupName}</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0 w-full flex flex-col">
-              <div className="flex items-center justify-between">
-                <div className="flex items-end gap-1">
-                  <span className="text-2xl font-bold">
-                    {item.totalThisWeek}
+        {cards.map((item, i) => {
+          return (
+            <Card
+              key={i}
+              data-active={cardPressed[item.category]}
+              className="data-[active=true]:border-blue-primary category hover:border-blue-primary cursor-pointer flex flex-col justify-between flex-1 w-full py-3 px-3"
+              onClick={() => clickFilterCard(item.category)}
+            >
+              <CardHeader className="p-0">
+                <CardTitle className="text-sm font-bold flex gap-2">
+                  <span>
+                    <CategoryIcon size={18} group={item.category} />
                   </span>
-                  <span className="text-xs">
-                    (últimos 7 dias)
+                  <span>
+                    {item.category}
+                  </span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0 w-full flex flex-col">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-end gap-1">
+                    <span className="text-2xl font-bold">
+                      {item.totalThisWeek}
+                    </span>
+                    <span className="text-xs pb-1">
+                      (últimos 7 dias)
+                    </span>
+                  </div>
+                  <div className={`flex items-center ${item.trend <= 0 ? "text-green-500" : "text-red-500"}`}>
+                    {item.trend >= 0 ? (
+                      <TrendingUp className="h-4 w-4 mr-2" />
+                    ) : (
+                      <TrendingDown className="h-4 w-4 mr-2" />
+                    )}
+                    <span className="font-medium">{Math.abs(item.trend)}%</span>
+                  </div>
+                </div>
+                <div className="flex gap-1 text-xs mt-1">
+                  <span>
+                    {item.totalPastWeek}
+                  </span>
+                  <span>
+                    (semana anterior)
                   </span>
                 </div>
-                <div className={`flex items-center ${item.trend <= 0 ? "text-green-500" : "text-red-500"}`}>
-                  {item.trend >= 0 ? (
-                    <TrendingUp className="h-4 w-4 mr-2" />
-                  ) : (
-                    <TrendingDown className="h-4 w-4 mr-2" />
-                  )}
-                  <span className="font-medium">{Math.abs(item.trend)}%</span>
-                </div>
-              </div>
-              <div className="flex gap-1 text-xs mt-1">
-                <span>
-                  {item.totalPastWeek}
-                </span>
-                <span>
-                  (semana anterior)
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-        <Card className="group flex flex-col justify-between gap-2 flex-1 w-full py-3 px-3">
+              </CardContent>
+            </Card>
+          )
+        })}
+        <Card className="category flex flex-col justify-between gap-2 flex-1 w-full py-3 px-3">
           <CardHeader className="p-0">
             <CardTitle className="text-sm font-bold">Média de tempo de atendimento:</CardTitle>
           </CardHeader>
@@ -195,7 +204,7 @@ export default function Dashboard() {
                 </span>
               </div>
               <div className="flex items-end gap-1">
-                <span className="text-xl font-bold">
+                <span className="text-2xl font-bold">
                   7
                 </span>
                 <span>
@@ -231,7 +240,7 @@ const chartConfig = {
 export function StackChart({ data }: { data: TCardOutput[] | GroupedPoint[] }) {
 
   const chartData = data.map(p => ({
-    group: p.groupName,
+    category: p.category,
     fechado: p.closed,
     aberto: p.open
   }))
@@ -245,10 +254,12 @@ export function StackChart({ data }: { data: TCardOutput[] | GroupedPoint[] }) {
         <ChartContainer config={chartConfig}>
           <BarChart
             margin={{ left: 0, right: 0 }}
-            accessibilityLayer data={chartData}>
+            accessibilityLayer
+            data={chartData}
+          >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="group"
+              dataKey="category"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
@@ -267,6 +278,7 @@ export function StackChart({ data }: { data: TCardOutput[] | GroupedPoint[] }) {
                 fill="#fff"
                 offset={12}
                 fontSize={12}
+                formatter={(v: number) => v === 0 ? "" : v}
               />
             </Bar>
             <Bar
@@ -281,6 +293,7 @@ export function StackChart({ data }: { data: TCardOutput[] | GroupedPoint[] }) {
                 fill="#fff"
                 offset={12}
                 fontSize={12}
+                formatter={(v: number) => v === 0 ? "" : v}
               />
             </Bar>
           </BarChart>
@@ -300,3 +313,4 @@ export function StackChart({ data }: { data: TCardOutput[] | GroupedPoint[] }) {
     </Card>
   )
 }
+
