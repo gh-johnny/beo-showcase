@@ -1,8 +1,10 @@
 import Dashboard from "./components/Dashboard";
+import { Header } from "@/components/header";
 
 export default async function Home() {
   return (
-     <main className="mx-auto w-full px-8 py-10">
+    <main className="mx-auto w-full px-8 pb-10 pt-4">
+      <Header />
       <Dashboard />
     </main>
   );

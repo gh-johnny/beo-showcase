@@ -5,6 +5,7 @@ import "./globals.css";
 import { AppSidebar } from "@/components/sidebar";
 import OccurrencesProvider from "@/context/OccurrencesContext";
 import { MOCK_OCCURRENCES_RESPONSE } from "@/mocks/occurrences";
+import Footer from "@/components/footer";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -35,19 +36,15 @@ export default function RootLayout({
         <OccurrencesProvider initialOccurrences={MOCK_OCCURRENCES_RESPONSE}>
           <SidebarProvider>
             <AppSidebar />
-            <div className="w-full pl-4">
-              {children}
+            <div className="w-full flex flex-col justify-between">
+              <div className="pl-4 pb-14">
+                {children}
+              </div>
+              <Footer />
             </div>
           </SidebarProvider>
         </OccurrencesProvider>
       </body>
     </html>
   );
-}
-
-function Footer() {
-  return(
-    <>
-    </>
-  )
 }
