@@ -13,6 +13,8 @@ const SANTA_BARBARA_LAT = '-22.7557' as const
 const SANTA_BARBARA_LON = '-47.4145' as const
 
 import { Card } from './ui/card'
+import { TCategory } from '@/app/components/category-icon'
+// import { useEffectNoMount } from '@/hooks/use-effect-no-mount'
 
 interface LatLngLiteral {
   lat: number
@@ -35,37 +37,43 @@ export type TPoint = {
   intensity: string | string[] | null
 }
 
-export function MapHome({ initialPoints }: { initialPoints: TPoint[] }) {
-  const [points] = useState<TPoint[] | undefined>([...initialPoints])
+export function MapHome({ data }: { data: TPoint[], category: TCategory | undefined }) {
+  const [points] = useState<TPoint[]>(data)
+
+  // useEffectNoMount(() => {
+  //   if (category !== undefined) {
+  //     const a = points.filter(p => p.category == category)
+  //     setPoints(a)
+  //     console.log("from mapcompo:", a)
+  //   }
+  // }, [data, category])
 
   return (
-    points && (
-      <APIProvider
-        libraries={['places', 'maps']}
-        apiKey={process.env.NEXT_PUBLIC_MAPS_API_KEY as string}
-      >
-        <Card className="overflow-hidden h-full w-full">
-          <Map
-            defaultZoom={15}
-            disableDefaultUI={true}
-            zoomControl={true}
-            fullscreenControl={true}
-            defaultCenter={{
-              lat: Number(SANTA_BARBARA_LAT),
-              lng: Number(SANTA_BARBARA_LON),
-            }}
-            mapId={process.env.NEXT_PUBLIC_MAPS_ID}
-          >
-            <Markers points={points!} />
-          </Map>
-          <Script
-            id="googlemaps"
-            type="text/javascript"
-            src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_MAPS_API_KEY ?? ''}&libraries=places`}
-          />
-        </Card>
-      </APIProvider>
-    )
+    <APIProvider
+      libraries={['places', 'maps']}
+      apiKey={process.env.NEXT_PUBLIC_MAPS_API_KEY as string}
+    >
+      <Card className="cursor-default overflow-hidden h-full w-full">
+        <Map
+          defaultZoom={15}
+          disableDefaultUI={true}
+          zoomControl={true}
+          fullscreenControl={true}
+          defaultCenter={{
+            lat: Number(SANTA_BARBARA_LAT),
+            lng: Number(SANTA_BARBARA_LON),
+          }}
+          mapId={process.env.NEXT_PUBLIC_MAPS_ID}
+        >
+          <Markers points={points!} />
+        </Map>
+        <Script
+          id="googlemaps"
+          type="text/javascript"
+          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_MAPS_API_KEY ?? ''}&libraries=places`}
+        />
+      </Card>
+    </APIProvider>
   )
 }
 
@@ -112,7 +120,7 @@ function Markers({ points }: TMarkerProps) {
             ref={(marker) => setMarkerRef(marker, point.key.toString())}
             position={point as LatLngLiteral | LatLng | null | undefined}
           >
-            <div className='relative category w-fit h-fit'>
+            <div className='cursor-pointer relative group w-fit h-fit'>
               <Image
                 className=""
                 src={'/marcador_mapa.png'}
@@ -120,10 +128,27 @@ function Markers({ points }: TMarkerProps) {
                 width={25}
                 height={25}
               />
-              <div className='bg-white whitespace-nowrap p-2 rounded-lg border absolute -top-10 left-0 hidden category-hover:block'>
-                {point.event}
-                {point.intensity?.toString()}
-                {point.date}
+              <div className='flex-col gap-1 bg-white p-2 rounded-lg border absolute -top-7 left-3 hidden group-hover:flex'>
+                <span className='whitespace-nowrap'>
+                  {point.event}
+                </span>
+                {
+                  // <span className='flex gap-1 whitespace-nowrap'>
+                  //   Evento: {point.event}
+                  // </span>
+                  // <span className='flex gap-1 whitespace-nowrap'>
+                  //   Categoria: {point.category}
+                  // </span>
+                  // <span className='flex gap-1 whitespace-nowrap'>
+                  //   Status: {point.isOpen}
+                  // </span>
+                  // <span className='flex gap-1 whitespace-nowrap'>
+                  //   Categoria: {point.intensity?.toString()}
+                  // </span>
+                  // <span className='flex gap-1 whitespace-nowrap'>
+                  //   Data: {point.date}
+                  // </span>
+                }
               </div>
             </div>
           </AdvancedMarker>

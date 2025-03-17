@@ -13,19 +13,18 @@ const dictIcon: Record<TCategory, React.FC<LucideProps>> = {
 }
 
 interface IconProps {
-  group: TCategory;
+  category: TCategory;
   size?: number;
   color?: string;
 }
 
-const CategoryIcon: React.FC<IconProps> = ({ group, size, color }) => {
-  const Icon = dictIcon[group];
+const CategoryIcon: React.FC<IconProps> = ({ category, size, color }) => {
+  const Icon = dictIcon[category];
 
   if (!Icon) {
-    console.error(`Icon not found for group: "${group}"`);
+    console.error(`Icon not found for group: "${category}"`);
     return null;
   }
-
 
   return <Icon size={size} color={color} />;
 };

@@ -19,7 +19,7 @@ import CategoryIcon, { TCategory } from "./category-icon"
 
 
 type TCardOutput = {
-  category: TCategory,
+  category: TCategory | string,
   totalPastWeek: number,
   totalThisWeek: number,
   trend: number
@@ -113,6 +113,9 @@ export default function Dashboard() {
   const cards = transformPointsToGroupStats(mockPointsWithEvento)
 
   const [cardInfoForChart, setCardInfoForChart] = useState<TCardOutput[] | GroupedPoint[]>(cards)
+  const [cardInfoForMap, setCardInfoForMap] = useState<TPoint[]>(mockPointsWithEvento)
+
+  const [whichCategory, setWhichCategory] = useState<TCategory | undefined>(undefined)
 
   const [cardPressed, setCardPressed] = useState<{ [key in TCategory]: boolean }>({
     'Defesa civil': false,
@@ -135,6 +138,11 @@ export default function Dashboard() {
       return obj
     })
     setCardInfoForChart(isAllInactive ? cards : groupByName(mockPointsWithEvento, category))
+
+    setWhichCategory(isAllInactive ? undefined : category)
+
+    const filteredPins = isAllInactive ? mockPointsWithEvento : mockPointsWithEvento.filter(c => c.category === category)
+    setCardInfoForMap(filteredPins)
   }
 
   return (
@@ -144,14 +152,14 @@ export default function Dashboard() {
           return (
             <Card
               key={i}
-              data-active={cardPressed[item.category]}
+              data-active={cardPressed[item.category as TCategory]}
               className="data-[active=true]:border-blue-primary category hover:border-blue-primary cursor-pointer flex flex-col justify-between flex-1 w-full py-3 px-3"
-              onClick={() => clickFilterCard(item.category)}
+              onClick={() => clickFilterCard(item.category as TCategory)}
             >
               <CardHeader className="p-0">
                 <CardTitle className="text-sm font-bold flex gap-2">
                   <span>
-                    <CategoryIcon size={18} group={item.category} />
+                    <CategoryIcon size={18} category={item.category as TCategory} />
                   </span>
                   <span>
                     {item.category}
@@ -218,7 +226,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="p-2">
-          <MapHome initialPoints={[]} />
+          <MapHome data={cardInfoForMap} category={whichCategory} />
         </Card>
         <StackChart data={cardInfoForChart} />
       </div>
