@@ -7,13 +7,14 @@ import {
 } from '@vis.gl/react-google-maps'
 import Image from 'next/image'
 import Script from 'next/script'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 const SANTA_BARBARA_LAT = '-22.7557' as const
 const SANTA_BARBARA_LON = '-47.4145' as const
 
 import { Card } from './ui/card'
 import { TCategory } from '@/app/components/category-icon'
+import { useEffectNoMount } from '@/hooks/use-effect-no-mount'
 // import { useEffectNoMount } from '@/hooks/use-effect-no-mount'
 
 interface LatLngLiteral {
@@ -39,18 +40,25 @@ export type TPoint = {
   rating: number | null
 }
 
-export function MapHome({ data }: { data: TPoint[], category: TCategory | undefined }) {
-  const [points] = useState<TPoint[]>(data)
+export function MapHome({ data, category }: { data: TPoint[], category: TCategory | undefined }) {
+  const [points, setPoints] = useState<TPoint[]>(data)
 
-  // useEffectNoMount(() => {
-  //   if (category !== undefined) {
-  //     const a = points.filter(p => p.category == category)
-  //     setPoints(a)
-  //     console.log("from mapcompo:", a)
-  //   }
-  // }, [data, category])
+  const [updateFlag, setUpdateFlag] = useState(true)
 
-  return (
+  useEffect(() => {
+    if (category !== undefined) {
+      setPoints(data.filter(d => d.category == category))
+      setUpdateFlag(false)
+    } else {
+      setPoints(data.slice())
+    }
+  }, [data, category])
+
+  useLayoutEffect(() => {
+    setUpdateFlag(true)
+  }, [points])
+
+  return updateFlag && (
     <APIProvider
       libraries={['places', 'maps']}
       apiKey={process.env.NEXT_PUBLIC_MAPS_API_KEY as string}
