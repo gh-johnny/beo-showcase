@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { MessageSquare } from "lucide-react"
 import { TPoint } from "@/components/map"
 import { Input } from "@/components/ui/input"
-import { formatDistance, subDays } from "date-fns"
+import { formatDistance } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import Image from "next/image"
 
@@ -17,6 +17,10 @@ export default function PointsTable({ points }: { points: TPoint[] }) {
   const [selectedRows, setSelectedRows] = useState<number[]>([])
   const [modalOpen, setModalOpen] = useState(false)
   const [currentPoint, setCurrentPoint] = useState<TPoint | null>(null)
+
+  const [tablePoints, setTablePoints] = useState<TPoint[]>(points)
+
+  const noteInputRef = useRef<HTMLInputElement | null>(null)
 
   // Toggle selection of a row
   const toggleRowSelection = (key: number) => {
@@ -45,6 +49,16 @@ export default function PointsTable({ points }: { points: TPoint[] }) {
     return intensity
   }
 
+  const closeOccurrence = () => {
+    if (noteInputRef.current !== null) {
+      noteInputRef.current!.value = ""
+    }
+
+    const selectedRowsValue = selectedRows
+
+    setTablePoints(prev => prev.filter(item => !selectedRowsValue.includes(item.key)))
+  }
+
   return (
     <div className="w-full">
       <div className="border-b rounded-md overflow-hidden">
@@ -53,7 +67,7 @@ export default function PointsTable({ points }: { points: TPoint[] }) {
             <TableRow className="hover:bg-gray-primary hover:opacity-100">
               <TableHead>
                 <Checkbox
-                  checked={selectedRows.length === points.length && points.length > 0}
+                  checked={selectedRows.length === tablePoints.length && tablePoints.length > 0}
                   onCheckedChange={toggleAllRows}
                   aria-label="Select all rows"
                   className="min-w-[18px] w-[18px] min-h-[18px] h-[18px] border-white data-[state=checked]:bg-blue-primary data-[state=checked]:text-white data-[state=checked]:border-transparent"
@@ -68,14 +82,14 @@ export default function PointsTable({ points }: { points: TPoint[] }) {
         <div className="max-h-[290px] overflow-y-auto">
           <Table className="border-x">
             <TableBody>
-              {points.length === 0 ? (
+              {tablePoints.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={4} className="h-24 text-center">
-                    No data available
+                    Sem dados disponíveis
                   </TableCell>
                 </TableRow>
               ) : (
-                points.map((point) => (
+                tablePoints.map((point) => (
                   <TableRow key={point.key} className="h-16 odd:bg-zinc-100">
                     <TableCell>
                       <Checkbox
@@ -109,6 +123,7 @@ export default function PointsTable({ points }: { points: TPoint[] }) {
             <TableRow>
               <TableCell className="w-full">
                 <Input
+                  ref={noteInputRef}
                   placeholder="Notas para munícipe"
                   className="flex-1 w-full bg-white focus-visible:ring-gray-primary"
                 />
@@ -116,6 +131,7 @@ export default function PointsTable({ points }: { points: TPoint[] }) {
               <TableCell>
                 <Button
                   className="bg-gray-primary hover:bg-blue-primary focus-visible:ring-gray-primary"
+                  onClick={() => closeOccurrence()}
                 >
                   Fechar ocorrência(s)
                 </Button>
