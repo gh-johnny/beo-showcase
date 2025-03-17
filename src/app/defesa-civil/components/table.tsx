@@ -9,6 +9,9 @@ import { Badge } from "@/components/ui/badge"
 import { MessageSquare } from "lucide-react"
 import { TPoint } from "@/components/map"
 import { Input } from "@/components/ui/input"
+import { formatDistance, subDays } from "date-fns"
+import { ptBR } from "date-fns/locale"
+import Image from "next/image"
 
 export default function PointsTable({ points }: { points: TPoint[] }) {
   const [selectedRows, setSelectedRows] = useState<number[]>([])
@@ -44,25 +47,26 @@ export default function PointsTable({ points }: { points: TPoint[] }) {
 
   return (
     <div className="w-full">
-      <div className="rounded-md border">
-        <Table className="top-0">
+      <div className="border-b rounded-md overflow-hidden">
+        <Table className="top-0 border-gray-primary bg-gray-primary h-14">
           <TableHeader>
-            <TableRow>
-              <TableHead className="w-12">
+            <TableRow className="hover:bg-gray-primary hover:opacity-100">
+              <TableHead>
                 <Checkbox
                   checked={selectedRows.length === points.length && points.length > 0}
                   onCheckedChange={toggleAllRows}
                   aria-label="Select all rows"
+                  className="min-w-[18px] w-[18px] min-h-[18px] h-[18px] border-white data-[state=checked]:bg-blue-primary data-[state=checked]:text-white data-[state=checked]:border-transparent"
                 />
               </TableHead>
-              <TableHead>Event</TableHead>
-              <TableHead>Neighborhood</TableHead>
-              <TableHead className="text-right">Comments</TableHead>
+              <TableHead className="text-white">Ocorrência</TableHead>
+              <TableHead className="text-white">Bairro</TableHead>
+              <TableHead className="text-right text-white">Comentários</TableHead>
             </TableRow>
           </TableHeader>
         </Table>
         <div className="max-h-[290px] overflow-y-auto">
-          <Table>
+          <Table className="border-x">
             <TableBody>
               {points.length === 0 ? (
                 <TableRow>
@@ -72,20 +76,26 @@ export default function PointsTable({ points }: { points: TPoint[] }) {
                 </TableRow>
               ) : (
                 points.map((point) => (
-                  <TableRow key={point.key} className="h-16">
+                  <TableRow key={point.key} className="h-16 odd:bg-zinc-100">
                     <TableCell>
                       <Checkbox
                         checked={selectedRows.includes(point.key)}
                         onCheckedChange={() => toggleRowSelection(point.key)}
                         aria-label={`Select row ${point.key}`}
+                        className="min-w-[18px] w-[18px] min-h-[18px] h-[18px] data-[state=checked]:bg-blue-primary data-[state=checked]:text-white data-[state=checked]:border-transparent"
                       />
                     </TableCell>
                     <TableCell className="font-medium">{point.event}</TableCell>
                     <TableCell>{point.neighborhood}</TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="sm" onClick={() => openPointDetails(point)}>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openPointDetails(point)}
+                        className="hover:bg-blue-primary hover:text-white text-md"
+                      >
                         <MessageSquare className="h-4 w-4 mr-2" />
-                        Details
+                        Detalhes
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -94,7 +104,7 @@ export default function PointsTable({ points }: { points: TPoint[] }) {
             </TableBody>
           </Table>
         </div>
-        <Table>
+        <Table className="border-x rounded-md rounded-b">
           <TableFooter>
             <TableRow>
               <TableCell className="w-full">
@@ -105,7 +115,7 @@ export default function PointsTable({ points }: { points: TPoint[] }) {
               </TableCell>
               <TableCell>
                 <Button
-                className="bg-gray-primary hover:bg-blue-primary focus-visible:ring-gray-primary"
+                  className="bg-gray-primary hover:bg-blue-primary focus-visible:ring-gray-primary"
                 >
                   Fechar ocorrência(s)
                 </Button>
@@ -122,31 +132,46 @@ export default function PointsTable({ points }: { points: TPoint[] }) {
             <DialogHeader>
               <DialogTitle>{currentPoint.event}</DialogTitle>
               <DialogDescription>
-                {currentPoint.date} - {currentPoint.neighborhood}
+                <span className="capitalize">
+                  {formatDistance(currentPoint.date, new Date(), { addSuffix: true, locale: ptBR }).toString().at(0)}
+                </span>
+                <span>
+                  {formatDistance(currentPoint.date, new Date(), { addSuffix: true, locale: ptBR }).slice(1)} - {currentPoint.neighborhood}
+                </span>
               </DialogDescription>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
+            <section className="mx-auto rounded-lg overflow-hidden">
+              <Image
+                src={"/vazamento-agua.jpg"}
+                alt=""
+                width={400}
+                height={220}
+              />
+            </section>
+            <blockquote className="flex flex-col gap-1 font-medium italic">
+              <span>
+                &quot;Tem água vazando aqui na rua da minha casa!! 😭&quot;
+              </span>
+              <span> - Amélia Duarte</span>
+            </blockquote>
+            <div className="grid gap-4">
               <div className="grid grid-cols-2 gap-2">
-                <div className="font-medium">Category:</div>
-                <div>{currentPoint.category}</div>
-
                 <div className="font-medium">Status:</div>
-                <div>
-                  <Badge variant={currentPoint.isOpen ? "default" : "secondary"}>
-                    {currentPoint.isOpen ? "Open" : "Closed"}
+                <div className="ml-auto">
+                  <Badge
+                    data-open={currentPoint.isOpen}
+                    variant={currentPoint.isOpen ? "default" : "secondary"}
+                    className="bg-gray-primary data-[open=true]:bg-blue-primary text-white"
+                  >
+                    {currentPoint.isOpen ? "Aberto" : "Fechado"}
                   </Badge>
                 </div>
 
-                <div className="font-medium">Location:</div>
-                <div>
-                  {currentPoint.lat}, {currentPoint.lng}
-                </div>
+                <div className="font-medium">Categoria:</div>
+                <div className="text-right">{currentPoint.category}</div>
 
-                <div className="font-medium">Intensity:</div>
-                <div>{formatIntensity(currentPoint.intensity)}</div>
-
-                <div className="font-medium">Key:</div>
-                <div>{currentPoint.key}</div>
+                <div className="font-medium">Detalhe:</div>
+                <div className="text-right">{formatIntensity(currentPoint.intensity)}</div>
               </div>
             </div>
           </DialogContent>
