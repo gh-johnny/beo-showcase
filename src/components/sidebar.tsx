@@ -122,7 +122,7 @@ const NavSideBar: React.FC = () => {
                     </ToggleGroupItem>
                     <p
                       data-disabled={!route.active}
-                      className="transition-all whitespace-nowrap text-sm text-accent-foreground group-data-[state=collapsed]:hidden data-[disabled=true]:text-zinc-500"
+                      className="transition-all whitespace-nowrap text-sm text-white group-data-[state=collapsed]:hidden data-[disabled=true]:text-zinc-500"
                     >
                       {route.text}
                     </p>
@@ -170,7 +170,7 @@ const SidebarConfig: React.FC = () => {
                   </picture>
                   <p
                     data-disabled={!item.active}
-                    className="transition-all whitespace-nowrap text-sm text-accent-foreground group-data-[state=collapsed]:hidden data-[disabled=true]:text-zinc-500"
+                    className="transition-all whitespace-nowrap text-sm text-white group-data-[state=collapsed]:hidden data-[disabled=true]:text-zinc-500"
                   >
                     {item.text}
                   </p>

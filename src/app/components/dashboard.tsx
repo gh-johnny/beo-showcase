@@ -11,7 +11,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 
-import { Card, CardContent, CardHeader, CardTitle, CardFooter, } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { MapHome, TPoint } from "@/components/map"
 import { mockPointsWithEvento } from "@/mocks/occurrences"
 import { useState } from "react"
@@ -226,7 +226,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="p-2">
-          <MapHome data={cardInfoForMap} category={whichCategory} />
+          <MapHome data={cardInfoForMap.filter(v => v.category === whichCategory)} category={whichCategory} />
         </Card>
         <StackChart data={cardInfoForChart} />
       </div>
@@ -307,17 +307,6 @@ export function StackChart({ data }: { data: TCardOutput[] | GroupedPoint[] }) {
           </BarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
-        {
-          // <div className="flex gap-2 font-medium leading-none">
-          //   Aumento de ocorrências em
-          //   <span className="text-rose-500">
-          //     5.2%
-          //   </span>
-          //   <TrendingUp className="text-rose-500 h-4 w-4" />
-          // </div>
-        }
-      </CardFooter>
     </Card>
   )
 }

@@ -35,6 +35,8 @@ export type TPoint = {
   category: string
   date: string
   intensity: string | string[] | null
+  neighborhood: string
+  rating: number | null
 }
 
 export function MapHome({ data }: { data: TPoint[], category: TCategory | undefined }) {
