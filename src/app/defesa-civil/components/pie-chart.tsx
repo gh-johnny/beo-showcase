@@ -128,7 +128,7 @@ export default function EventPieChart({ data }: EventPieChartProps) {
       <CardContent className="relative flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mt-2 mx-auto aspect-square max-h-[350px] pb-0"
+          className="mt-2 mx-auto aspect-square max-w-[280px] pb-0"
         >
           <PieChart>
             <ChartTooltip content={<ChartTooltipContent hideLabel />} />
@@ -155,7 +155,7 @@ export default function EventPieChart({ data }: EventPieChartProps) {
             />
           </PieChart>
         </ChartContainer>
-        <ul className="absolute top-24 right-8 flex flex-col gap-2">
+        <ul className="absolute top-20 right-[2dvw] flex flex-col gap-2">
           <List items={legend} render={(item, i) => (
             <li
               key={i}

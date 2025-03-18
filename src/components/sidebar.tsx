@@ -24,11 +24,17 @@ import { SIDEBAR_CONFIG, SIDEBAR_ROUTE_CONTENT } from "@/config/sidebar-content"
 import { ChevronRight, Menu } from "lucide-react"
 
 export const AppSidebar: React.FC<React.ComponentProps<typeof Sidebar>> = ({ ...props }) => {
+  const pathName = usePathname();
+
   const { isMobile, setOpen } = useSidebar();
 
   useMount(() => {
     setOpen(false)
-  })
+  });
+
+  if (pathName === '/login') {
+    return null
+  }
 
   return (
     <Sidebar

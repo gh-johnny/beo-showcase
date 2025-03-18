@@ -1,3 +1,5 @@
+"use client"
+
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -5,16 +7,48 @@ import { Label } from "@/components/ui/label"
 import { Eye, EyeOff } from "lucide-react"
 import React from "react"
 import { Show } from "./utils/show"
+import { useRouter } from "next/navigation"
+import { useRef } from "react";
+import { useMount } from "@/hooks/use-mount"
+
+const ADMIN_EMAIL = 'admin@beo.com'
+const ADMIN_PASS = '123123'
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"form">) {
+  const router = useRouter();
+
+  const emailInputRef = useRef<HTMLInputElement | null>(null)
+  const passInputRef = useRef<HTMLInputElement | null>(null)
+
   const [showPassword, setShowPassword] = React.useState(false);
 
   const toggleShowPassword = () => {
     setShowPassword(prev => !prev);
   }
+
+  const sendForm = () => {
+    if (emailInputRef.current === null ||
+      passInputRef.current === null) {
+      return;
+    }
+
+    if (emailInputRef.current.value !== ADMIN_EMAIL || passInputRef.current.value !== ADMIN_PASS) {
+      return;
+    }
+
+    emailInputRef.current.value = "";
+    passInputRef.current.value = "";
+
+    router.push('/')
+  }
+
+  useMount(() => {
+    router.prefetch('/')
+    router.prefetch('/defesa-civil')
+  })
 
   return (
     <form className={cn("flex flex-col gap-6", className)} {...props}>
@@ -27,10 +61,22 @@ export function LoginForm({
       <div className="grid gap-6">
         <div className="grid gap-2">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="email@example.com" required />
+          <Input
+            ref={emailInputRef}
+            id="email"
+            type="email"
+            placeholder="email@example.com"
+            required
+          />
         </div>
         <div className="relative grid gap-2">
-          <Input id="password" type={showPassword ? "text" : "password"} placeholder="*******" required />
+          <Input
+            ref={passInputRef}
+            id="password"
+            type={showPassword ? "text" : "password"}
+            placeholder="*******"
+            required
+          />
           <Button
             className="bg-transparent shadow-none hover:bg-transparent group min-w-8 w-8 min-h-8 h-8 absolute right-2 top-1/2 -translate-y-1/2"
             type="button"
@@ -50,8 +96,9 @@ export function LoginForm({
           </Button>
         </div>
         <Button
-          type="submit"
+          type="button"
           className="bg-blue-light w-full hover:bg-blue-light/70"
+          onClick={() => sendForm()}
         >
           Login
         </Button>
