@@ -77,7 +77,7 @@ export default function NeighborhoodRatingsChart({ data }: { data: TPoint[] }) {
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              width={100}
+              width={125}
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <Bar
