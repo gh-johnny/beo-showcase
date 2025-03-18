@@ -11,7 +11,7 @@ export default function Footer() {
   }
 
   return (
-    <footer className="fixed bottom-0 w-full bg-[#f2f2f2] flex justify-center items-center h-16 border-gray-primary">
+    <footer className="fixed bottom-0 w-dvw bg-[#f2f2f2] flex justify-center items-center h-16 border-gray-primary">
       <Image
         src="/logo_beo_transparent.png"
         alt=""

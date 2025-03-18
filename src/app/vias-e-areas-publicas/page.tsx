@@ -1,7 +1,7 @@
+import DefaultPage from "@/components/default-page";
+
 export default function Page(){
     return (
-		<>
-			<h1>Hello Page</h1>
-		</>
+      <DefaultPage/>
 	)
 }

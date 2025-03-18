@@ -22,6 +22,7 @@ import { Show } from "./utils/show"
 import { List } from "./utils/list"
 import { SIDEBAR_CONFIG, SIDEBAR_ROUTE_CONTENT } from "@/config/sidebar-content"
 import { ChevronRight, Menu } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export const AppSidebar: React.FC<React.ComponentProps<typeof Sidebar>> = ({ ...props }) => {
   const pathName = usePathname();
@@ -81,6 +82,8 @@ export const AppSidebar: React.FC<React.ComponentProps<typeof Sidebar>> = ({ ...
 
 const NavSideBar: React.FC = () => {
   const path = usePathname()
+  const { open } = useSidebar();
+
   return (
     <section>
       <TooltipProvider>
@@ -92,7 +95,8 @@ const NavSideBar: React.FC = () => {
                 <TooltipTrigger asChild>
                   <Link
                     href={!route.active ? path : route.path}
-                    className="flex items-center gap-4 w-full"
+                    data-open={open}
+                    className="pr-3 data-[open=true]:hover:bg-white rounded-lg hover:text-gray-primary text-white hover:border-gray-primary flex items-center gap-6 w-full"
                   >
                     <ToggleGroupItem
                       value={route.path}
@@ -103,7 +107,7 @@ const NavSideBar: React.FC = () => {
                       <div
                         data-active-route={path === route.path}
                         data-disabled-link={!route.active}
-                        className="hover:text-gray-primary text-white hover:border-gray-primary border border-transparent w-full h-full flex justify-center items-center"
+                        className="border border-transparent w-full h-full flex justify-center items-center"
                       >
                         <Show
                           when={typeof route.icon === 'string'}
@@ -127,8 +131,7 @@ const NavSideBar: React.FC = () => {
                       </div>
                     </ToggleGroupItem>
                     <p
-                      data-disabled={!route.active}
-                      className="transition-all whitespace-nowrap text-sm text-white group-data-[state=collapsed]:hidden data-[disabled=true]:text-zinc-500"
+                      className="whitespace-nowrap text-sm group-data-[state=collapsed]:hidden"
                     >
                       {route.text}
                     </p>
@@ -147,6 +150,8 @@ const NavSideBar: React.FC = () => {
 }
 
 const SidebarConfig: React.FC = () => {
+  const router = useRouter();
+
   return (
     <section className="flex gap-3 flex-col">
       <TooltipProvider>
@@ -156,7 +161,8 @@ const SidebarConfig: React.FC = () => {
             <Tooltip key={i}>
               <TooltipTrigger>
                 <div
-                  className="transition-all text-white hover:text-gray-primary hover:bg-white w-full h-full flex items-center gap-6 rounded data-[active-route=true]:bg-blue-primary data-[active-route=true]:text-white"
+                  className="rounded-lg transition-all text-white hover:text-gray-primary hover:bg-white w-full h-full flex items-center gap-6 data-[active-route=true]:bg-blue-primary data-[active-route=true]:text-white"
+                  onClick={item.text === 'Usuário' ? () => router.push('/login') : () => router.push('/configuracao')}
                 >
                   <picture className="rounded flex justify-center items-center min-w-8 w-8 min-h-8 h-8 p-[6px]">
                     <Show
@@ -176,7 +182,7 @@ const SidebarConfig: React.FC = () => {
                   </picture>
                   <p
                     data-disabled={!item.active}
-                    className="transition-all whitespace-nowrap text-sm text-white group-data-[state=collapsed]:hidden data-[disabled=true]:text-zinc-500"
+                    className="pr-3 whitespace-nowrap text-sm group-data-[state=collapsed]:hidden data-[disabled=true]:text-zinc-500"
                   >
                     {item.text}
                   </p>
@@ -199,7 +205,7 @@ export const AppSidebarTrigger: React.FC = () => {
   return (
     <SidebarTrigger
       data-expanded={open}
-      className="absolute top-1 -right-10 border transition-all duration-500 m-1 min-w-6 w-6 min-h-6 h-6 data-[expanded=true]:rotate-180"
+      className="absolute top-1 -right-10 border border-zinc-400 transition-all duration-500 m-1 min-w-6 w-6 min-h-6 h-6 data-[expanded=true]:rotate-180"
       icon={isMobile ? Menu : ChevronRight}
     />
   )

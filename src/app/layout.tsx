@@ -40,8 +40,8 @@ export default function RootLayout({
               <div className="pl-4 pb-14">
                 {children}
               </div>
-              <Footer />
             </div>
+            <Footer />
           </SidebarProvider>
         </OccurrencesProvider>
       </body>
