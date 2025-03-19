@@ -14,8 +14,6 @@ const SANTA_BARBARA_LON = '-47.4145' as const
 
 import { Card } from './ui/card'
 import { TCategory } from '@/app/components/category-icon'
-import { useEffectNoMount } from '@/hooks/use-effect-no-mount'
-// import { useEffectNoMount } from '@/hooks/use-effect-no-mount'
 
 interface LatLngLiteral {
   lat: number

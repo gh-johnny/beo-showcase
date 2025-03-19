@@ -1,6 +1,4 @@
-"use client"
-
-import { useRef, useState } from "react"
+import { useLayoutEffect, useRef, useState } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -13,7 +11,7 @@ import { formatDistance } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import Image from "next/image"
 
-export default function PointsTable({ points }: { points: TPoint[] }) {
+export default function PointsTable({ points, updateFromTableToMap }: { points: TPoint[], updateFromTableToMap: (updatedPointsList: TPoint[]) => void }) {
   const [selectedRows, setSelectedRows] = useState<number[]>([])
   const [modalOpen, setModalOpen] = useState(false)
   const [currentPoint, setCurrentPoint] = useState<TPoint | null>(null)
@@ -22,27 +20,23 @@ export default function PointsTable({ points }: { points: TPoint[] }) {
 
   const noteInputRef = useRef<HTMLInputElement | null>(null)
 
-  // Toggle selection of a row
   const toggleRowSelection = (key: number) => {
     setSelectedRows((prev) => (prev.includes(key) ? prev.filter((rowKey) => rowKey !== key) : [...prev, key]))
   }
 
-  // Toggle all rows selection
   const toggleAllRows = () => {
-    if (selectedRows.length === points.length) {
+    if (selectedRows.length === tablePoints.length) {
       setSelectedRows([])
     } else {
-      setSelectedRows(points.map((point) => point.key))
+      setSelectedRows(tablePoints.map((point) => point.key))
     }
   }
 
-  // Open modal with point details
   const openPointDetails = (point: TPoint) => {
     setCurrentPoint(point)
     setModalOpen(true)
   }
 
-  // Format intensity for display
   const formatIntensity = (intensity: string | string[] | null) => {
     if (intensity === null) return "N/A"
     if (Array.isArray(intensity)) return intensity.join(", ")
@@ -59,6 +53,10 @@ export default function PointsTable({ points }: { points: TPoint[] }) {
     setTablePoints(prev => prev.filter(item => !selectedRowsValue.includes(item.key)))
   }
 
+  useLayoutEffect(() => {
+    updateFromTableToMap(tablePoints)
+  }, [tablePoints, updateFromTableToMap])
+
   return (
     <div className="w-full">
       <div className="border-b rounded-md overflow-hidden">
@@ -69,7 +67,7 @@ export default function PointsTable({ points }: { points: TPoint[] }) {
                 <Checkbox
                   checked={selectedRows.length === tablePoints.length && tablePoints.length > 0}
                   onCheckedChange={toggleAllRows}
-                  aria-label="Select all rows"
+                  aria-label="Selecione todas as linhas"
                   className="min-w-[18px] w-[18px] min-h-[18px] h-[18px] border-white data-[state=checked]:bg-blue-primary data-[state=checked]:text-white data-[state=checked]:border-transparent"
                 />
               </TableHead>
@@ -79,8 +77,14 @@ export default function PointsTable({ points }: { points: TPoint[] }) {
             </TableRow>
           </TableHeader>
         </Table>
-        <div className="max-h-[290px] overflow-y-auto">
-          <Table className="border-x">
+        <div
+          data-empty={tablePoints.length === 0}
+          className="h-[290px] max-h-[290px] data-[empty=true]:border-x overflow-y-auto"
+        >
+          <Table
+            data-empty={tablePoints.length === 0}
+            className="data-[empty=false]:border-x data-[empty=true]:mt-20"
+          >
             <TableBody>
               {tablePoints.length === 0 ? (
                 <TableRow>

@@ -48,7 +48,6 @@ export default function EventPieChart({ data }: EventPieChartProps) {
   const [chartData, setChartData] = useState<{ name: string; value: number; percentage: number }[]>([])
 
   useEffect(() => {
-    // Process data to count events by type
     const eventCounts: Record<string, number> = {}
     data.forEach((point) => {
       if (eventCounts[point.event]) {
@@ -58,7 +57,6 @@ export default function EventPieChart({ data }: EventPieChartProps) {
       }
     })
 
-    // Convert to chart data format
     const totalEvents = data.length
     const processedData = Object.entries(eventCounts).map(([event, count]) => ({
       name: event,
@@ -66,7 +64,6 @@ export default function EventPieChart({ data }: EventPieChartProps) {
       percentage: (count / totalEvents) * 100,
     }))
 
-    // Generate color config for the chart
     const colors = [
       "#f94144",
       "hsl(var(--chart-2))",

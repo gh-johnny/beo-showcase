@@ -16,10 +16,8 @@ const processDataByNeighborhood = (data: TPoint[]) => {
     neighborhoodGroups[point.neighborhood].push(point)
   })
 
-  // Calculate average rating for each neighborhood
   return Object.entries(neighborhoodGroups)
     .map(([neighborhood, points]) => {
-      // Filter out null ratings
       const validRatings = points.filter((p) => p.rating !== null).map((p) => p.rating as number)
       const averageRating =
         validRatings.length > 0 ? validRatings.reduce((sum, rating) => sum + rating, 0) / validRatings.length : 0
@@ -29,12 +27,12 @@ const processDataByNeighborhood = (data: TPoint[]) => {
         averageRating: Number.parseFloat(averageRating.toFixed(1)),
       }
     })
-    .sort((a, b) => a.averageRating - b.averageRating) // Sort by rating for better visualization
+    .sort((a, b) => a.averageRating - b.averageRating)
 }
 
 const chartConfig = {
   averageRating: {
-    label: "Average Rating",
+    label: "Média de avaliação",
     color: "hsl(var(--chart-1))",
   },
 } satisfies ChartConfig
@@ -82,7 +80,7 @@ export default function NeighborhoodRatingsChart({ data }: { data: TPoint[] }) {
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <Bar
               dataKey="averageRating"
-              name="Average Rating"
+              name="Média de avaliação"
               fill="#444e5a"
               radius={5} />
           </BarChart>
