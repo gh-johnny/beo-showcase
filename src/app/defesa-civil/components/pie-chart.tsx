@@ -29,8 +29,8 @@ const chartConfig: { [key: string]: { label: string, color: string } } = {
     label: "Queda de árvore",
     color: "#90be6d",
   },
-  "Queda de post/fios": {
-    label: "Queda de post/fios",
+  "Queda de poste/fios": {
+    label: "Queda de poste/fios",
     color: "#f9c74f",
   },
   "Queda de muro": {

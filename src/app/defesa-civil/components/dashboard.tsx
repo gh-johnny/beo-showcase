@@ -16,7 +16,7 @@ export default function Dashboard() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <Card className="p-2 h-full">
+        <Card className="p-2 min-w-[200px] min-h-[200px] h-full">
         <MapHome data={pointsForMap.filter(v => v.category === 'Defesa civil')} category={'Defesa civil'} />
       </Card>
       <Card className="p-2">

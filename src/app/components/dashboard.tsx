@@ -225,7 +225,7 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card className="p-2">
+        <Card className="p-2 min-w-[200px] min-h-[200px]">
           <MapHome data={cardInfoForMap.slice()} category={whichCategory} />
         </Card>
         <StackChart data={cardInfoForChart} />
