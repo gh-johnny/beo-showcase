@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { PieChart, Pie } from "recharts"
+import { PieChart, Pie, Cell } from "recharts"
 
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -12,65 +12,34 @@ interface EventPieChartProps {
   data: TPoint[]
 }
 
-const legend = [
-  {
-    label: "Alagamento",
-    color: "#000",
-  },
-  {
-    label: "Foco de dengue",
-    color: "#000",
-  },
-  {
-    label: "Foco de incêndio",
-    color: "#000",
-  },
-  {
-    label: "Queda de árvore",
-    color: "#000",
-  },
-  {
-    label: "Queda de post/fios",
-    color: "#000",
-  },
-  {
-    label: "Queda de muro",
-    color: "#000",
-  },
-  {
-    label: "Deslizamento",
-    color: "#000",
-  },
-]
-
-const chartConfig = {
+const chartConfig: { [key: string]: { label: string, color: string } } = {
   "Alagamento": {
     label: "Alagamento",
-    color: "#000",
+    color: "#577590",
   },
   "Foco de dengue": {
     label: "Foco de dengue",
-    color: "#000",
+    color: "#f3722c",
   },
   "Foco de incêndio": {
     label: "Foco de incêndio",
-    color: "#000",
+    color: "#f94144",
   },
   "Queda de árvore": {
     label: "Queda de árvore",
-    color: "#000",
+    color: "#90be6d",
   },
   "Queda de post/fios": {
     label: "Queda de post/fios",
-    color: "#000",
+    color: "#f9c74f",
   },
   "Queda de muro": {
     label: "Queda de muro",
-    color: "#000",
+    color: "#43aa8b",
   },
   'Deslizamento': {
     label: "Deslizamento",
-    color: "#000",
+    color: "#f8961e",
   },
 } satisfies ChartConfig
 
@@ -99,7 +68,7 @@ export default function EventPieChart({ data }: EventPieChartProps) {
 
     // Generate color config for the chart
     const colors = [
-      "hsl(var(--chart-1))",
+      "#f94144",
       "hsl(var(--chart-2))",
       "hsl(var(--chart-3))",
       "hsl(var(--chart-4))",
@@ -125,10 +94,10 @@ export default function EventPieChart({ data }: EventPieChartProps) {
       <CardHeader className="items-center pb-0">
         <CardTitle>Ocorrências nos últimos 30 dias</CardTitle>
       </CardHeader>
-      <CardContent className="relative flex-1 pb-0">
+      <CardContent className="flex justify-center gap-16 flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mt-2 mx-auto aspect-square max-w-[280px] pb-0"
+          className="mt-2 aspect-square max-w-[300px] pb-0"
         >
           <PieChart>
             <ChartTooltip content={<ChartTooltipContent hideLabel />} />
@@ -136,6 +105,7 @@ export default function EventPieChart({ data }: EventPieChartProps) {
               data={chartData}
               dataKey="value"
               nameKey="name"
+              color="color"
               labelLine={false}
               label={({ payload, ...props }) => {
                 return (
@@ -152,11 +122,15 @@ export default function EventPieChart({ data }: EventPieChartProps) {
                   </text>
                 )
               }}
-            />
+            >
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={chartConfig[entry.name]?.color || "#ccc"} />
+              ))}
+            </Pie>
           </PieChart>
         </ChartContainer>
-        <ul className="absolute top-20 right-[2dvw] flex flex-col gap-2">
-          <List items={legend} render={(item, i) => (
+        <ul className="flex flex-col justify-center gap-2">
+          <List items={Object.values(chartConfig)} render={(item, i) => (
             <li
               key={i}
               className="flex items-center gap-2 text-sm"
@@ -165,7 +139,7 @@ export default function EventPieChart({ data }: EventPieChartProps) {
                 className={`min-w-3 w-3 min-h-3 h-3 rounded-[3px]`}
                 style={{ backgroundColor: item.color }}
               />
-              <span>{item.label}</span>
+              <span className="text-nowrap">{item.label}</span>
             </li>
           )} />
         </ul>

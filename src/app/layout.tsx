@@ -37,7 +37,7 @@ export default function RootLayout({
           <SidebarProvider>
             <AppSidebar />
             <div className="w-full flex flex-col justify-between">
-              <div className="pl-4 pb-14">
+              <div className="px-4 pb-14">
                 {children}
               </div>
             </div>

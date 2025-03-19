@@ -58,7 +58,7 @@ export default function NeighborhoodRatingsChart({ data }: { data: TPoint[] }) {
             layout="vertical"
             margin={{
               left: 10,
-              right: 10,
+              right: 20,
               top: 10,
               bottom: 10,
             }}
