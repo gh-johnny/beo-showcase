@@ -131,8 +131,6 @@ export default function Page() {
                   <SelectValue placeholder="Unidade" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="segundos">Segundos</SelectItem>
-                  <SelectItem value="minutos">Minutos</SelectItem>
                   <SelectItem value="horas">Horas</SelectItem>
                   <SelectItem value="dias">Dias</SelectItem>
                   <SelectItem value="semanas">Semanas</SelectItem>
