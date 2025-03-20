@@ -181,7 +181,7 @@ export default function PointsTable({ points, updateFromTableToMap }: { points: 
                   <Badge
                     data-open={currentPoint.isOpen}
                     variant={currentPoint.isOpen ? "default" : "secondary"}
-                    className="bg-gray-primary data-[open=true]:bg-blue-primary text-white"
+                    className="bg-gray-primary data-[open=true]:bg-blue-primary text-white data-[open=false]:hover:bg-gray-primary"
                   >
                     {currentPoint.isOpen ? "Aberto" : "Fechado"}
                   </Badge>
